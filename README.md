@@ -107,8 +107,17 @@ Manage Model Context Protocol servers across your team:
 
 - **Share Configurations** → Distribute MCP server setups via Git
 - **Secure Credentials** → Store secrets in gitignored `.env` files
-- **Multi-Tool Sync** → One command syncs to Claude Desktop, Cursor, Windsurf
+- **Multi-Tool Sync** → One command syncs to Claude Code, Claude Desktop, Cursor, Windsurf
 - **Environment Resolution** → Automatically inject credentials at sync time
+
+**Supported IDEs:**
+| IDE | MCP Config Location | Tool Limit |
+|-----|---------------------|------------|
+| Claude Code | `.claude/settings.local.json` | Unlimited |
+| Claude Desktop | `~/Library/Application Support/Claude/claude_desktop_config.json` | Unlimited |
+| Cursor | `.cursor/mcp.json` or `~/.cursor/mcp.json` | 40 tools |
+| Windsurf | `~/.codeium/windsurf/mcp_config.json` | 100 tools |
+| GitHub Copilot | `.vscode/mcp.json` | 128 tools |
 
 **Key Commands:**
 ```bash
@@ -124,13 +133,15 @@ aiconfig mcp list                                  # Show installed servers
 
 Bundle and distribute complete AI assistant configurations:
 
-- **Multi-Component Packages** → Combine instructions, MCP servers, hooks, and commands
+- **Multi-Component Packages** → Combine instructions, MCP servers, hooks, commands, skills, workflows
 - **IDE-Aware Installation** → Automatically adapts to target IDE capabilities
+- **Package Creation** → Generate packages from existing project configurations
+- **Secret Detection** → Automatically templates secrets in MCP configs
 - **Conflict Resolution** → Handle existing files with skip, overwrite, or rename strategies
-- **Installation Tracking** → Know what's installed and manage package lifecycle
 
 **Key Commands:**
 ```bash
+aiconfig package create --name my-pkg                # Create package from project
 aiconfig package install <package-path> --ide <ide>  # Install package
 aiconfig package list                                 # Show installed packages
 aiconfig package uninstall <package-name>            # Remove package
@@ -242,6 +253,21 @@ Any IDE-specific content from Git repositories:
 - Architecture decision records (ADRs)
 - Testing patterns and strategies
 - IDE automation hooks (pre-prompt, post-prompt)
+
+### Packages
+
+Complete configuration bundles with multiple component types:
+
+| Component | Claude | Cursor | Windsurf | Copilot |
+|-----------|--------|--------|----------|---------|
+| Instructions | `.claude/rules/` | `.cursor/rules/` | `.windsurf/rules/` | `.github/instructions/` |
+| MCP Servers | ✅ | ✅ | ✅ | ✅ |
+| Hooks | ✅ | ❌ | ❌ | ❌ |
+| Commands | ✅ | ❌ | ❌ | ❌ |
+| Skills | ✅ | ❌ | ❌ | ❌ |
+| Workflows | ❌ | ❌ | ✅ | ❌ |
+| Memory Files | ✅ (CLAUDE.md) | ❌ | ❌ | ❌ |
+| Resources | ✅ | ✅ | ✅ | ❌ |
 
 ### MCP Server Configurations
 

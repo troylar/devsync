@@ -62,7 +62,7 @@ class TestFilterComponentsByCapability:
         assert len(filtered["resources"]) == 1
 
     def test_filter_components_for_cursor(self) -> None:
-        """Test that Cursor only supports instructions and resources."""
+        """Test that Cursor supports instructions, MCP servers, and resources."""
         from aiconfigkit.core.models import InstructionComponent
 
         package = Package(
@@ -89,9 +89,9 @@ class TestFilterComponentsByCapability:
         filtered = _filter_components_by_capability(package, capability)
 
         assert len(filtered["instructions"]) == 1
-        assert len(filtered.get("mcp_servers", [])) == 0
-        assert len(filtered.get("hooks", [])) == 0
-        assert len(filtered.get("commands", [])) == 0
+        assert len(filtered.get("mcp_servers", [])) == 1  # Cursor now supports MCP
+        assert len(filtered.get("hooks", [])) == 0  # Hooks still not supported
+        assert len(filtered.get("commands", [])) == 0  # Commands still not supported
         assert len(filtered["resources"]) == 1
 
 

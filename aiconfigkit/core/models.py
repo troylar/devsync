@@ -983,8 +983,11 @@ class ComponentType(Enum):
     INSTRUCTION = "instruction"
     MCP_SERVER = "mcp_server"
     HOOK = "hook"
-    COMMAND = "command"
+    COMMAND = "command"  # Legacy: .claude/commands/
+    SKILL = "skill"  # Claude skills: .claude/skills/
+    WORKFLOW = "workflow"  # Windsurf workflows: .windsurf/workflows/
     RESOURCE = "resource"
+    MEMORY_FILE = "memory_file"  # CLAUDE.md files
 
 
 class InstallationStatus(Enum):
@@ -1274,6 +1277,125 @@ class ResourceComponent:
 
 
 @dataclass
+class SkillComponent:
+    """
+    Reference to a Claude skill directory.
+
+    Skills are directories containing SKILL.md with optional supporting files.
+    They can be invoked via slash commands and are shared across Claude products.
+
+    Attributes:
+        name: Skill identifier (directory name)
+        file: Relative path to skill directory
+        description: What the skill does (from SKILL.md frontmatter)
+        ide_support: IDEs that support skills (Claude only)
+    """
+
+    name: str
+    file: str
+    description: str
+    ide_support: list[str] = field(default_factory=lambda: ["claude"])
+
+    def to_dict(self) -> dict:
+        """Serialize to dictionary."""
+        return {
+            "name": self.name,
+            "file": self.file,
+            "description": self.description,
+            "ide_support": self.ide_support,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "SkillComponent":
+        """Deserialize from dictionary."""
+        return cls(
+            name=data["name"],
+            file=data["file"],
+            description=data["description"],
+            ide_support=data.get("ide_support", ["claude"]),
+        )
+
+
+@dataclass
+class WorkflowComponent:
+    """
+    Reference to a Windsurf workflow.
+
+    Workflows define multi-step automated processes in Windsurf.
+
+    Attributes:
+        name: Workflow identifier
+        file: Relative path to workflow file
+        description: What the workflow does
+        ide_support: IDEs that support workflows (Windsurf only)
+    """
+
+    name: str
+    file: str
+    description: str
+    ide_support: list[str] = field(default_factory=lambda: ["windsurf"])
+
+    def to_dict(self) -> dict:
+        """Serialize to dictionary."""
+        return {
+            "name": self.name,
+            "file": self.file,
+            "description": self.description,
+            "ide_support": self.ide_support,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "WorkflowComponent":
+        """Deserialize from dictionary."""
+        return cls(
+            name=data["name"],
+            file=data["file"],
+            description=data["description"],
+            ide_support=data.get("ide_support", ["windsurf"]),
+        )
+
+
+@dataclass
+class MemoryFileComponent:
+    """
+    Reference to a CLAUDE.md memory file.
+
+    Memory files persist context across Claude Code sessions and can exist
+    at project root or in subdirectories.
+
+    Attributes:
+        name: File identifier (usually "CLAUDE" or path-based)
+        file: Relative path to CLAUDE.md file
+        description: What context the memory file provides
+        ide_support: IDEs that support memory files (Claude only)
+    """
+
+    name: str
+    file: str
+    description: str
+    ide_support: list[str] = field(default_factory=lambda: ["claude"])
+
+    def to_dict(self) -> dict:
+        """Serialize to dictionary."""
+        return {
+            "name": self.name,
+            "file": self.file,
+            "description": self.description,
+            "ide_support": self.ide_support,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "MemoryFileComponent":
+        """Deserialize from dictionary."""
+        return cls(
+            name=data["name"],
+            file=data["file"],
+            description=data["description"],
+            ide_support=data.get("ide_support", ["claude"]),
+        )
+
+
+@dataclass
 class PackageComponents:
     """
     Container for all component types in a package.
@@ -1282,7 +1404,10 @@ class PackageComponents:
         instructions: Instruction files
         mcp_servers: MCP server configs
         hooks: IDE lifecycle hooks
-        commands: Slash commands/scripts
+        commands: Slash commands/scripts (legacy)
+        skills: Claude skills (directories with SKILL.md)
+        workflows: Windsurf workflows
+        memory_files: CLAUDE.md memory files
         resources: Arbitrary files
     """
 
@@ -1290,13 +1415,23 @@ class PackageComponents:
     mcp_servers: list[MCPServerComponent] = field(default_factory=list)
     hooks: list[HookComponent] = field(default_factory=list)
     commands: list[CommandComponent] = field(default_factory=list)
+    skills: list[SkillComponent] = field(default_factory=list)
+    workflows: list[WorkflowComponent] = field(default_factory=list)
+    memory_files: list[MemoryFileComponent] = field(default_factory=list)
     resources: list[ResourceComponent] = field(default_factory=list)
 
     @property
     def total_count(self) -> int:
         """Total number of components."""
         return (
-            len(self.instructions) + len(self.mcp_servers) + len(self.hooks) + len(self.commands) + len(self.resources)
+            len(self.instructions)
+            + len(self.mcp_servers)
+            + len(self.hooks)
+            + len(self.commands)
+            + len(self.skills)
+            + len(self.workflows)
+            + len(self.memory_files)
+            + len(self.resources)
         )
 
     @property
@@ -1311,6 +1446,12 @@ class PackageComponents:
             types.append("hooks")
         if self.commands:
             types.append("commands")
+        if self.skills:
+            types.append("skills")
+        if self.workflows:
+            types.append("workflows")
+        if self.memory_files:
+            types.append("memory_files")
         if self.resources:
             types.append("resources")
         return types
@@ -1328,6 +1469,9 @@ class PackageComponents:
             "mcp_servers": [m.to_dict() for m in self.mcp_servers],
             "hooks": [h.to_dict() for h in self.hooks],
             "commands": [c.to_dict() for c in self.commands],
+            "skills": [s.to_dict() for s in self.skills],
+            "workflows": [w.to_dict() for w in self.workflows],
+            "memory_files": [m.to_dict() for m in self.memory_files],
             "resources": [r.to_dict() for r in self.resources],
         }
 
@@ -1339,6 +1483,9 @@ class PackageComponents:
             mcp_servers=[MCPServerComponent.from_dict(m) for m in data.get("mcp_servers", [])],
             hooks=[HookComponent.from_dict(h) for h in data.get("hooks", [])],
             commands=[CommandComponent.from_dict(c) for c in data.get("commands", [])],
+            skills=[SkillComponent.from_dict(s) for s in data.get("skills", [])],
+            workflows=[WorkflowComponent.from_dict(w) for w in data.get("workflows", [])],
+            memory_files=[MemoryFileComponent.from_dict(m) for m in data.get("memory_files", [])],
             resources=[ResourceComponent.from_dict(r) for r in data.get("resources", [])],
         )
 

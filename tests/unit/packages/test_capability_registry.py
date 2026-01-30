@@ -77,14 +77,16 @@ class TestCapabilityRegistry:
         assert cursor.instructions_directory == ".cursor/rules/"
         assert cursor.instruction_file_extension == ".mdc"
         assert cursor.supports_project_scope
-        assert not cursor.supports_global_scope
+        assert cursor.supports_global_scope  # Cursor now supports global scope
+        assert cursor.mcp_config_path == "~/.cursor/mcp.json"
+        assert cursor.mcp_project_config_path == ".cursor/mcp.json"
 
-        # Cursor supports instructions and resources
+        # Cursor supports instructions, MCP, and resources
         assert cursor.supports_component(ComponentType.INSTRUCTION)
+        assert cursor.supports_component(ComponentType.MCP_SERVER)  # Now supported
         assert cursor.supports_component(ComponentType.RESOURCE)
 
-        # Cursor does not support MCP, hooks, or commands
-        assert not cursor.supports_component(ComponentType.MCP_SERVER)
+        # Cursor does not support hooks or commands
         assert not cursor.supports_component(ComponentType.HOOK)
         assert not cursor.supports_component(ComponentType.COMMAND)
 
@@ -98,15 +100,20 @@ class TestCapabilityRegistry:
         assert claude.instruction_file_extension == ".md"
         assert claude.supports_project_scope
         assert not claude.supports_global_scope
-        assert claude.mcp_config_path == "~/.config/claude/config.json"
+        assert claude.mcp_config_path == "~/.claude/settings.json"
+        assert claude.mcp_project_config_path == ".claude/settings.local.json"
         assert claude.hooks_directory == ".claude/hooks/"
         assert claude.commands_directory == ".claude/commands/"
+        assert claude.skills_directory == ".claude/skills/"
+        assert claude.memory_file_name == "CLAUDE.md"
 
-        # Claude Code supports all component types
+        # Claude Code supports all component types including skills and memory files
         assert claude.supports_component(ComponentType.INSTRUCTION)
         assert claude.supports_component(ComponentType.MCP_SERVER)
         assert claude.supports_component(ComponentType.HOOK)
         assert claude.supports_component(ComponentType.COMMAND)
+        assert claude.supports_component(ComponentType.SKILL)
+        assert claude.supports_component(ComponentType.MEMORY_FILE)
         assert claude.supports_component(ComponentType.RESOURCE)
 
     def test_windsurf_capabilities(self) -> None:
@@ -118,17 +125,20 @@ class TestCapabilityRegistry:
         assert windsurf.instructions_directory == ".windsurf/rules/"
         assert windsurf.instruction_file_extension == ".md"
         assert windsurf.supports_project_scope
-        assert not windsurf.supports_global_scope
-        assert windsurf.mcp_config_path is None  # MCP not supported for project-level packages
+        assert windsurf.supports_global_scope  # Windsurf supports global scope
+        assert windsurf.mcp_config_path == "~/.codeium/windsurf/mcp_config.json"
+        assert windsurf.workflows_directory == ".windsurf/workflows/"
 
-        # Windsurf supports instructions and resources only
+        # Windsurf supports instructions, MCP, workflows, and resources
         assert windsurf.supports_component(ComponentType.INSTRUCTION)
-        assert not windsurf.supports_component(ComponentType.MCP_SERVER)  # Not supported
+        assert windsurf.supports_component(ComponentType.MCP_SERVER)  # Now supported
+        assert windsurf.supports_component(ComponentType.WORKFLOW)
         assert windsurf.supports_component(ComponentType.RESOURCE)
 
-        # Windsurf does not support hooks or commands
+        # Windsurf does not support hooks, commands, or skills
         assert not windsurf.supports_component(ComponentType.HOOK)
         assert not windsurf.supports_component(ComponentType.COMMAND)
+        assert not windsurf.supports_component(ComponentType.SKILL)
 
     def test_copilot_capabilities(self) -> None:
         """Test GitHub Copilot capabilities."""
@@ -136,17 +146,19 @@ class TestCapabilityRegistry:
 
         assert copilot.tool_type == AIToolType.COPILOT
         assert copilot.tool_name == "GitHub Copilot"
-        assert copilot.instructions_directory == ".github/instructions/"  # Updated to directory structure
-        assert copilot.instruction_file_extension == ".md"
+        assert copilot.instructions_directory == ".github/instructions/"
+        assert copilot.instruction_file_extension == ".instructions.md"
         assert copilot.supports_project_scope
-        assert not copilot.supports_global_scope
+        assert copilot.supports_global_scope  # Copilot supports global scope
+        assert copilot.mcp_config_path == "~/.vscode/mcp.json"
+        assert copilot.mcp_project_config_path == ".vscode/mcp.json"
 
-        # Copilot supports instructions only
+        # Copilot supports instructions and MCP
         assert copilot.supports_component(ComponentType.INSTRUCTION)
+        assert copilot.supports_component(ComponentType.MCP_SERVER)  # Now supported
         assert not copilot.supports_component(ComponentType.RESOURCE)  # Not supported
 
-        # Copilot does not support MCP, hooks, or commands
-        assert not copilot.supports_component(ComponentType.MCP_SERVER)
+        # Copilot does not support hooks or commands
         assert not copilot.supports_component(ComponentType.HOOK)
         assert not copilot.supports_component(ComponentType.COMMAND)
 
@@ -178,12 +190,12 @@ class TestCapabilityRegistry:
         """Test getting tools that support MCP servers."""
         tools = get_supported_tools_for_component(ComponentType.MCP_SERVER)
 
-        # Only Claude Code supports MCP for project-level packages
-        assert len(tools) == 1
+        # All IDEs now support MCP (Claude, Cursor, Windsurf, Copilot)
+        assert len(tools) == 4
         assert AIToolType.CLAUDE in tools
-        assert AIToolType.WINSURF not in tools  # Not supported for project-level
-        assert AIToolType.CURSOR not in tools
-        assert AIToolType.COPILOT not in tools
+        assert AIToolType.CURSOR in tools
+        assert AIToolType.WINSURF in tools
+        assert AIToolType.COPILOT in tools  # Now supported via VS Code
 
     def test_get_supported_tools_for_hook(self) -> None:
         """Test getting tools that support hooks."""
@@ -219,8 +231,9 @@ class TestCapabilityRegistry:
 
     def test_validate_component_support_false(self) -> None:
         """Test validating unsupported component."""
-        assert not validate_component_support(AIToolType.CURSOR, ComponentType.MCP_SERVER)
-        assert not validate_component_support(AIToolType.COPILOT, ComponentType.HOOK)
+        assert not validate_component_support(AIToolType.CURSOR, ComponentType.HOOK)  # Cursor doesn't support hooks
+        assert not validate_component_support(AIToolType.COPILOT, ComponentType.HOOK)  # Copilot doesn't support hooks
+        assert not validate_component_support(AIToolType.COPILOT, ComponentType.RESOURCE)  # Copilot doesn't support resources
 
     def test_validate_component_support_invalid_tool(self) -> None:
         """Test validating component for invalid tool returns False."""

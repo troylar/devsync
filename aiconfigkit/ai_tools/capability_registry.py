@@ -22,8 +22,12 @@ class IDECapability:
     supports_project_scope: bool = True
     supports_global_scope: bool = False
     mcp_config_path: str | None = None
+    mcp_project_config_path: str | None = None  # Project-level MCP config
     hooks_directory: str | None = None
     commands_directory: str | None = None
+    skills_directory: str | None = None  # Claude skills
+    workflows_directory: str | None = None  # Windsurf workflows
+    memory_file_name: str | None = None  # CLAUDE.md
     notes: str = ""
 
     def supports_component(self, component_type: ComponentType) -> bool:
@@ -48,18 +52,21 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
         tool_name="Cursor",
         supported_components={
             ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
             ComponentType.RESOURCE,
         },
         instructions_directory=".cursor/rules/",
         instruction_file_extension=".mdc",
         supports_project_scope=True,
-        supports_global_scope=False,
-        mcp_config_path=None,  # MCP not yet natively supported
+        supports_global_scope=True,
+        mcp_config_path="~/.cursor/mcp.json",
+        mcp_project_config_path=".cursor/mcp.json",
         hooks_directory=None,  # Hooks not supported
         commands_directory=None,  # Commands not supported
         notes=(
             "Cursor uses .mdc (markdown with metadata) files in .cursor/rules/. "
-            "Supports project-level only. Global rules use single .cursorrules file."
+            "MCP servers configured via ~/.cursor/mcp.json (global) or .cursor/mcp.json (project). "
+            "Supports up to 40 MCP tools. Resources not yet supported in MCP."
         ),
     ),
     AIToolType.CLAUDE: IDECapability(
@@ -70,19 +77,24 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
             ComponentType.MCP_SERVER,
             ComponentType.HOOK,
             ComponentType.COMMAND,
+            ComponentType.SKILL,
+            ComponentType.MEMORY_FILE,
             ComponentType.RESOURCE,
         },
         instructions_directory=".claude/rules/",
         instruction_file_extension=".md",
         supports_project_scope=True,
         supports_global_scope=False,
-        mcp_config_path="~/.config/claude/config.json",
+        mcp_config_path="~/.claude/settings.json",
+        mcp_project_config_path=".claude/settings.local.json",
         hooks_directory=".claude/hooks/",
         commands_directory=".claude/commands/",
+        skills_directory=".claude/skills/",
+        memory_file_name="CLAUDE.md",
         notes=(
             "Claude Code uses .md files in .claude/rules/. "
-            "Full support for MCP servers, hooks, and slash commands. "
-            "Supports project-level only."
+            "Full support for MCP servers, hooks, slash commands, and skills. "
+            "CLAUDE.md files persist context across sessions."
         ),
     ),
     AIToolType.WINSURF: IDECapability(
@@ -90,32 +102,44 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
         tool_name="Windsurf",
         supported_components={
             ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.WORKFLOW,
             ComponentType.RESOURCE,
         },
         instructions_directory=".windsurf/rules/",
         instruction_file_extension=".md",
         supports_project_scope=True,
-        supports_global_scope=False,
-        mcp_config_path=None,  # MCP not supported for project-level packages
+        supports_global_scope=True,
+        mcp_config_path="~/.codeium/windsurf/mcp_config.json",
+        mcp_project_config_path=None,  # Windsurf uses global MCP config only
         hooks_directory=None,  # Hooks not supported
         commands_directory=None,  # Commands not supported
-        notes=("Windsurf uses .md files in .windsurf/rules/. " "Project-level only."),
+        workflows_directory=".windsurf/workflows/",
+        notes=(
+            "Windsurf uses .md files in .windsurf/rules/ with 4 activation modes. "
+            "MCP servers configured via ~/.codeium/windsurf/mcp_config.json. "
+            "Supports workflows in .windsurf/workflows/. Limit of 100 MCP tools."
+        ),
     ),
     AIToolType.COPILOT: IDECapability(
         tool_type=AIToolType.COPILOT,
         tool_name="GitHub Copilot",
         supported_components={
             ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
         },
         instructions_directory=".github/instructions/",
-        instruction_file_extension=".md",
+        instruction_file_extension=".instructions.md",
         supports_project_scope=True,
-        supports_global_scope=False,
-        mcp_config_path=None,  # MCP not supported
+        supports_global_scope=True,
+        mcp_config_path="~/.vscode/mcp.json",  # User-level MCP config
+        mcp_project_config_path=".vscode/mcp.json",  # Workspace-level MCP config
         hooks_directory=None,  # Hooks not supported
         commands_directory=None,  # Commands not supported
         notes=(
-            "GitHub Copilot uses .github/instructions/ for project-level. " "Multi-file approach. Instructions only."
+            "GitHub Copilot uses .github/copilot-instructions.md (main) and "
+            ".github/instructions/**/*.instructions.md (file-specific with globs). "
+            "MCP servers configured via .vscode/mcp.json. Limit of 128 tools."
         ),
     ),
 }

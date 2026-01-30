@@ -7,6 +7,7 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
+from aiconfigkit.cli.package_create import create_package_command
 from aiconfigkit.cli.package_install import InstallationResult, install_package
 from aiconfigkit.core.models import (
     AIToolType,
@@ -19,6 +20,9 @@ from aiconfigkit.utils.project import find_project_root
 
 console = Console()
 package_app = typer.Typer(help="Manage configuration packages")
+
+# Register create command
+package_app.command(name="create")(create_package_command)
 
 
 @package_app.command(name="install")
