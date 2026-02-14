@@ -219,7 +219,7 @@ def install(c, dev=False, editable=True):
 @task
 def uninstall(c):
     """Uninstall the package."""
-    c.run("pip uninstall -y configsync", pty=PTY_SUPPORTED)
+    c.run("pip uninstall -y devsync", pty=PTY_SUPPORTED)
     print("✅ Package uninstalled successfully!")
 
 

@@ -429,7 +429,7 @@ def version() -> None:
     from importlib.metadata import version as get_version
 
     try:
-        version = get_version("configsync")
+        version = get_version("devsync")
     except Exception:
         version = "unknown"
 

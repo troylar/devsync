@@ -6,7 +6,7 @@
 
 [![CI](https://github.com/troylar/config-sync/actions/workflows/ci.yml/badge.svg)](https://github.com/troylar/config-sync/actions/workflows/ci.yml)
 [![Coverage](https://codecov.io/gh/troylar/config-sync/branch/main/graph/badge.svg)](https://codecov.io/gh/troylar/config-sync)
-[![PyPI version](https://img.shields.io/pypi/v/configsync.svg)](https://pypi.org/project/configsync/)
+[![PyPI version](https://img.shields.io/pypi/v/devsync.svg)](https://pypi.org/project/devsync/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -34,7 +34,7 @@ Config Sync is a CLI tool for distributing and managing AI coding assistant conf
 ### Install
 
 ```bash
-pip install configsync
+pip install devsync
 ```
 
 ### Templates: Share Coding Standards (30 seconds)
@@ -293,7 +293,7 @@ Model Context Protocol server setups for enhanced AI capabilities:
 
 ```bash
 # Using pip
-pip install configsync
+pip install devsync
 
 # Verify installation
 aiconfig --version

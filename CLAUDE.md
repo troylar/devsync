@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 **Config Sync** is a CLI tool for managing AI coding assistant instructions. It allows users to download instruction repositories to a local library, browse them with an interactive TUI, and install them to AI tools (Cursor, Claude Code, Windsurf, GitHub Copilot) at the project level.
 
-**CLI entry point:** `aiconfig` (installed via `pip install configsync`)
+**CLI entry point:** `aiconfig` (installed via `pip install devsync`)
 
 ## Architecture
 
@@ -504,7 +504,7 @@ This project uses **GitHub Actions with PyPI Trusted Publishing** for automated 
 
 1. Go to https://pypi.org/manage/account/publishing/
 2. Add a new publisher:
-   - **PyPI Project Name**: `configsync`
+   - **PyPI Project Name**: `devsync`
    - **Owner**: `troylar`
    - **Repository**: `config-sync`
    - **Workflow name**: `publish.yml`
@@ -665,7 +665,7 @@ Wait for the GitHub Actions workflow to complete (usually 2-5 minutes), then:
 
 ```bash
 # Verify package on PyPI
-pip install --upgrade configsync
+pip install --upgrade devsync
 
 # Check installed version
 aiconfig --version
@@ -674,7 +674,7 @@ aiconfig --version
 gh release view v0.2.0
 
 # Check PyPI page
-open https://pypi.org/project/configsync/
+open https://pypi.org/project/devsync/
 ```
 
 ### Testing on TestPyPI (Optional)
@@ -689,7 +689,7 @@ gh workflow run publish.yml -f repository=testpypi
 gh run watch
 ```
 
-Then verify on TestPyPI: https://test.pypi.org/project/configsync/
+Then verify on TestPyPI: https://test.pypi.org/project/devsync/
 
 ### Rollback (If Needed)
 

@@ -7,11 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.5.6] - 2026-02-14
+
+### Changed
+- **Project Rename** - Renamed from "AI Config Kit" to "Config Sync"
+- All documentation and references updated
+
 ## [0.5.5] - 2026-02-14
 
 ### Changed
-- **PyPI Package Rename** - Package renamed from `ai-config-kit` to `configsync`
-  - Install with `pip install configsync` (CLI command remains `aiconfig`)
+- **PyPI Package Rename** - Package renamed from `ai-config-kit` to `devsync`
+  - Install with `pip install devsync` (CLI command remains `aiconfig`)
   - Previous package name was quarantined by PyPI's anti-typosquatting filters
 
 ## [0.5.4] - 2026-02-14
