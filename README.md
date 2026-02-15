@@ -9,8 +9,9 @@
 [![PyPI version](https://img.shields.io/pypi/v/devsync.svg)](https://pypi.org/project/devsync/)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Known Vulnerabilities](https://snyk.io/test/github/troylar/devsync/badge.svg)](https://snyk.io/test/github/troylar/devsync)
 
-**Works with:** Claude Code • Claude Desktop • Cline • Codex CLI • Cursor • GitHub Copilot • Kiro • Roo Code • Windsurf
+**Works with:** Antigravity • Claude Code • Claude Desktop • Cline • Codex CLI • Cursor • Gemini CLI • GitHub Copilot • Kiro • Roo Code • Windsurf
 
 </div>
 
@@ -115,9 +116,11 @@ Manage Model Context Protocol servers across your team:
 **Supported IDEs:**
 | IDE | MCP Config Location | Tool Limit |
 |-----|---------------------|------------|
+| Antigravity | `.mcp.json` | Unlimited |
 | Claude Code | `.claude/settings.local.json` | Unlimited |
 | Claude Desktop | `~/Library/Application Support/Claude/claude_desktop_config.json` | Unlimited |
 | Cursor | `.cursor/mcp.json` or `~/.cursor/mcp.json` | 40 tools |
+| Gemini CLI | `~/.gemini/settings.json` | Unlimited |
 | Windsurf | `~/.codeium/windsurf/mcp_config.json` | 100 tools |
 | GitHub Copilot | `.vscode/mcp.json` | 128 tools |
 
@@ -260,16 +263,16 @@ Any IDE-specific content from Git repositories:
 
 Complete configuration bundles with multiple component types:
 
-| Component | Claude | Cline | Codex CLI | Cursor | Kiro | Roo Code | Windsurf | Copilot |
-|-----------|--------|-------|----------|--------|------|----------|----------|---------|
-| Instructions | `.claude/rules/` | `.clinerules/` | `AGENTS.md` | `.cursor/rules/` | `.kiro/steering/` | `.roo/rules/` | `.windsurf/rules/` | `.github/instructions/` |
-| MCP Servers | ✅ | ❌ | ❌ | ✅ | ❌ | ✅ | ✅ | ✅ |
-| Hooks | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Commands | ✅ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Skills | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Workflows | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Memory Files | ✅ (CLAUDE.md) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Resources | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Component | Antigravity | Claude | Cline | Codex CLI | Cursor | Gemini | Kiro | Roo Code | Windsurf | Copilot |
+|-----------|-------------|--------|-------|----------|--------|--------|------|----------|----------|---------|
+| Instructions | `.agent/rules/` | `.claude/rules/` | `.clinerules/` | `AGENTS.md` | `.cursor/rules/` | `GEMINI.md` | `.kiro/steering/` | `.roo/rules/` | `.windsurf/rules/` | `.github/instructions/` |
+| MCP Servers | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
+| Hooks | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Commands | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Skills | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Workflows | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
+| Memory Files | ❌ | ✅ (CLAUDE.md) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Resources | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
 
 ### MCP Server Configurations
 
@@ -289,7 +292,7 @@ Model Context Protocol server setups for enhanced AI capabilities:
 
 - Python 3.10 or higher
 - Git (for cloning template repositories)
-- One of: Claude Code, Claude Desktop, Cline, Codex CLI, Cursor, GitHub Copilot, Kiro, Roo Code, or Windsurf
+- One of: Antigravity, Claude Code, Claude Desktop, Cline, Codex CLI, Cursor, Gemini CLI, GitHub Copilot, Kiro, Roo Code, or Windsurf
 
 ### Install DevSync
 
