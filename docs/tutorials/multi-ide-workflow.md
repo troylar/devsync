@@ -26,7 +26,7 @@ You use multiple AI coding assistants throughout the day -- perhaps Claude Code 
 DevSync auto-detects installed AI coding assistants. Run:
 
 ```bash
-aiconfig tools
+devsync tools
 ```
 
 Expected output (varies by machine):
@@ -57,7 +57,7 @@ Kiro              not found
 Download a template repository to your local library. This tutorial uses the starter templates as an example:
 
 ```bash
-aiconfig download https://github.com/troylar/devsync-starter-templates
+devsync download https://github.com/troylar/devsync-starter-templates
 ```
 
 Expected output:
@@ -75,7 +75,7 @@ Instructions found:
 Browse what is available:
 
 ```bash
-aiconfig list available
+devsync list available
 ```
 
 This displays all instructions in your local library, ready to install.
@@ -90,13 +90,13 @@ Install an instruction to a specific IDE using the `--tool` flag:
 cd ~/projects/my-project
 
 # Install to Claude Code
-aiconfig install python-standards --tool claude
+devsync install python-standards --tool claude
 
 # Install to Cursor
-aiconfig install python-standards --tool cursor
+devsync install python-standards --tool cursor
 
 # Install to GitHub Copilot
-aiconfig install python-standards --tool copilot
+devsync install python-standards --tool copilot
 ```
 
 Each command places the instruction file in the correct directory with the correct format for that IDE.
@@ -104,7 +104,7 @@ Each command places the instruction file in the correct directory with the corre
 To install to all detected IDEs at once, use the interactive TUI:
 
 ```bash
-aiconfig install
+devsync install
 ```
 
 The TUI lets you select instructions from your library and choose which IDEs to target. Selected instructions are installed to all chosen tools simultaneously.
@@ -158,12 +158,12 @@ When the source repository is updated, you can pull the latest changes and reins
 
 ```bash
 # Update your local library
-aiconfig update troylar/devsync-starter-templates
+devsync update troylar/devsync-starter-templates
 
 # Reinstall to all IDEs
-aiconfig install python-standards --tool claude
-aiconfig install python-standards --tool cursor
-aiconfig install python-standards --tool copilot
+devsync install python-standards --tool claude
+devsync install python-standards --tool cursor
+devsync install python-standards --tool copilot
 ```
 
 DevSync detects that the files already exist and prompts you with conflict resolution options:
@@ -182,7 +182,7 @@ Your choice:
 To skip the prompt and always overwrite, use the `--conflict overwrite` flag:
 
 ```bash
-aiconfig install python-standards --tool claude --conflict overwrite
+devsync install python-standards --tool claude --conflict overwrite
 ```
 
 ---
@@ -206,7 +206,7 @@ DevSync supports two installation modes:
 Install a package with:
 
 ```bash
-aiconfig package install https://github.com/troylar/devsync-python-package --ide claude
+devsync package install https://github.com/troylar/devsync-python-package --ide claude
 ```
 
 !!! info "Package IDE support"
@@ -215,7 +215,7 @@ aiconfig package install https://github.com/troylar/devsync-python-package --ide
 To see what a package contains before installing:
 
 ```bash
-aiconfig package install https://github.com/troylar/devsync-python-package --ide claude --dry-run
+devsync package install https://github.com/troylar/devsync-python-package --ide claude --dry-run
 ```
 
 ---
@@ -224,7 +224,7 @@ aiconfig package install https://github.com/troylar/devsync-python-package --ide
 
 ### "No AI tools detected"
 
-Install at least one supported AI coding assistant and ensure it is on your system PATH. Run `aiconfig tools` after installation to confirm detection.
+Install at least one supported AI coding assistant and ensure it is on your system PATH. Run `devsync tools` after installation to confirm detection.
 
 ### Instruction installed but IDE does not use it
 
@@ -239,15 +239,15 @@ Verify the file has the `.mdc` extension and is located in `.cursor/rules/`. Cur
 If you frequently update instructions, use `--conflict overwrite` to avoid repeated prompts:
 
 ```bash
-aiconfig install python-standards --tool claude --conflict overwrite
+devsync install python-standards --tool claude --conflict overwrite
 ```
 
 ### Instructions appear in one IDE but not another
 
-Run `aiconfig list installed` to see which tools each instruction was installed to. You may need to install explicitly for each tool:
+Run `devsync list installed` to see which tools each instruction was installed to. You may need to install explicitly for each tool:
 
 ```bash
-aiconfig install python-standards --tool cursor
+devsync install python-standards --tool cursor
 ```
 
 ---

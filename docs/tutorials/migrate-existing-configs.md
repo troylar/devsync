@@ -241,7 +241,7 @@ cd ~/projects/my-project
 devsync template install https://github.com/your-org/team-ai-configs --as team
 
 # For package repositories
-aiconfig package install https://github.com/your-org/team-ai-configs --ide claude
+devsync package install https://github.com/your-org/team-ai-configs --ide claude
 ```
 
 Expected output for a template install:
@@ -353,7 +353,7 @@ devsync template install https://github.com/your-org/team-ai-configs --as team -
 Ensure you are installing to Cursor specifically:
 
 ```bash
-aiconfig install coding-standards --tool cursor
+devsync install coding-standards --tool cursor
 ```
 
 DevSync automatically converts `.md` source files to `.mdc` format for Cursor. If conversion fails, check that the source Markdown does not contain syntax that is incompatible with the `.mdc` format.
@@ -363,7 +363,7 @@ DevSync automatically converts `.md` source files to `.mdc` format for Cursor. I
 During the transition, you may have both manually created and DevSync-managed files. Use `--conflict rename` to keep both:
 
 ```bash
-aiconfig install coding-standards --tool claude --conflict rename
+devsync install coding-standards --tool claude --conflict rename
 ```
 
 This installs the DevSync version alongside the existing file so you can compare them before removing the old one.
@@ -373,7 +373,7 @@ This installs the DevSync version alongside the existing file so you can compare
 This usually means the local library is out of date. Have each team member update:
 
 ```bash
-aiconfig update your-org/team-ai-configs
+devsync update your-org/team-ai-configs
 ```
 
 Then reinstall:

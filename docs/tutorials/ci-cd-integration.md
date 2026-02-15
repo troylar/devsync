@@ -28,7 +28,7 @@ DevSync tracks installed instructions in `.devsync/installations.json` at the pr
 The workflow is:
 
 1. Define which instructions are required in a config file
-2. In CI, run `aiconfig list installed --json` to get current state
+2. In CI, run `devsync list installed --json` to get current state
 3. Compare against the requirements
 4. Fail the build if any are missing or outdated
 
@@ -101,7 +101,7 @@ if [ ! -f "$INSTALL_FILE" ]; then
   echo "FAIL: No installations.json found."
   echo "DevSync instructions have not been installed in this project."
   echo ""
-  echo "Run: aiconfig install"
+  echo "Run: devsync install"
   exit 1
 fi
 
@@ -162,7 +162,7 @@ if [ "$MISSING" -gt 0 ]; then
   echo "RESULT: $MISSING requirement(s) not met."
   echo ""
   echo "To fix, install the missing instructions:"
-  echo "  aiconfig install"
+  echo "  devsync install"
   exit 1
 else
   echo "RESULT: All requirements met."
@@ -239,7 +239,7 @@ jobs:
 
       - name: List installed instructions
         if: always()
-        run: aiconfig list installed --json || echo "No installations found"
+        run: devsync list installed --json || echo "No installations found"
 ```
 
 !!! warning "Path filters"
