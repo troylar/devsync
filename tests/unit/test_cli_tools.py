@@ -39,6 +39,11 @@ def mock_detector_no_tools(monkeypatch, temp_dir):
     home_dir = temp_dir / "empty_home"
     home_dir.mkdir()
     monkeypatch.setattr("devsync.utils.paths.get_home_directory", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.codex.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.gemini.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.gemini.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.antigravity.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.antigravity.Path.home", lambda: home_dir)
 
 
 class TestShowTools:

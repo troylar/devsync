@@ -208,6 +208,48 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
             "No MCP, hooks, or commands support."
         ),
     ),
+    AIToolType.GEMINI: IDECapability(
+        tool_type=AIToolType.GEMINI,
+        tool_name="Gemini CLI",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",  # GEMINI.md at project root
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path="~/.gemini/settings.json",
+        mcp_project_config_path=None,
+        hooks_directory=None,
+        commands_directory=None,
+        notes=(
+            "Gemini CLI and Gemini Code Assist use a single GEMINI.md file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers. "
+            "MCP servers configured via ~/.gemini/settings.json."
+        ),
+    ),
+    AIToolType.ANTIGRAVITY: IDECapability(
+        tool_type=AIToolType.ANTIGRAVITY,
+        tool_name="Antigravity IDE",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".agent/rules/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".mcp.json",
+        hooks_directory=None,
+        commands_directory=None,
+        notes=(
+            "Antigravity IDE (Google's VSCode fork) uses .md files in .agent/rules/. "
+            "MCP servers configured via .mcp.json at project root."
+        ),
+    ),
     AIToolType.COPILOT: IDECapability(
         tool_type=AIToolType.COPILOT,
         tool_name="GitHub Copilot",

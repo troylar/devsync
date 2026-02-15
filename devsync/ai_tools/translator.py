@@ -319,6 +319,85 @@ class WindsurfTranslator(ComponentTranslator):
         )
 
 
+class GeminiTranslator(ComponentTranslator):
+    """Translator for Gemini CLI / Code Assist (GEMINI.md at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.GEMINI
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Gemini format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path="GEMINI.md",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Gemini format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".gemini/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class AntigravityTranslator(ComponentTranslator):
+    """Translator for Antigravity IDE (.agent/rules/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.ANTIGRAVITY
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Antigravity .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".agent/rules/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Antigravity format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
 class CopilotTranslator(ComponentTranslator):
     """Translator for GitHub Copilot (.github/instructions/)."""
 
@@ -380,6 +459,8 @@ def get_translator(tool_type: AIToolType) -> ComponentTranslator:
         AIToolType.CURSOR: CursorTranslator,
         AIToolType.CLAUDE: ClaudeCodeTranslator,
         AIToolType.WINSURF: WindsurfTranslator,
+        AIToolType.GEMINI: GeminiTranslator,
+        AIToolType.ANTIGRAVITY: AntigravityTranslator,
         AIToolType.COPILOT: CopilotTranslator,
     }
 
