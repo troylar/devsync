@@ -48,7 +48,7 @@ devsync = "devsync.cli.main:app"
 
 [project.urls]
 Homepage = "https://github.com/troylar/devsync"
-Documentation = "https://github.com/troylar/devsync#readme"
+Documentation = "https://devsync.readthedocs.io"
 Repository = "https://github.com/troylar/devsync"
 Issues = "https://github.com/troylar/devsync/issues"
 
