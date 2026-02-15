@@ -111,6 +111,9 @@ nav:
     - tutorials/onboard-new-developer.md
     - tutorials/ai-merge-workflow.md
     - tutorials/custom-packages.md
+    - tutorials/ci-cd-integration.md
+    - tutorials/multi-ide-workflow.md
+    - tutorials/migrate-existing-configs.md
   - Advanced:
     - advanced/config-types.md
     - advanced/conflict-resolution.md

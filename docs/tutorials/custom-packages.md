@@ -62,7 +62,7 @@ version: 1.0.0
 description: Backend development standards with tooling, hooks, and commands
 author: Backend Team
 license: MIT
-namespace: your-org/backend-dev-kit
+namespace: troylar/devsync-python-package
 
 components:
   instructions:
@@ -597,14 +597,14 @@ git add .
 git commit -m "feat: initial backend-dev-kit package v1.0.0"
 git tag -a v1.0.0 -m "Release v1.0.0"
 
-gh repo create your-org/backend-dev-kit --private --source=. --remote=origin --push
+gh repo create troylar/devsync-python-package --private --source=. --remote=origin --push
 git push origin v1.0.0
 ```
 
 Team members install directly from the repository URL:
 
 ```bash
-devsync package install https://github.com/your-org/backend-dev-kit --ide claude
+devsync package install https://github.com/troylar/devsync-python-package --ide claude
 ```
 
 ### Option B: Shared Directory
@@ -648,7 +648,7 @@ Share this with your team:
 
 ```bash
 # Install the package (replace URL with your repository)
-devsync package install https://github.com/your-org/backend-dev-kit --ide claude
+devsync package install https://github.com/troylar/devsync-python-package --ide claude
 
 # If the package includes MCP servers, configure credentials
 devsync mcp configure your-org
@@ -663,7 +663,7 @@ devsync package list
 When the package is updated, team members can reinstall:
 
 ```bash
-devsync package install https://github.com/your-org/backend-dev-kit --ide claude --force
+devsync package install https://github.com/troylar/devsync-python-package --ide claude --force
 ```
 
 ---

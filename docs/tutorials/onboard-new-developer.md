@@ -93,13 +93,13 @@ Kiro              not found
 Global standards apply to every project on your machine. These typically include company coding conventions, security policies, and communication guidelines.
 
 ```bash
-devsync template install https://github.com/your-company/global-standards --as company --scope global
+devsync template install https://github.com/troylar/devsync-starter-templates --as company --scope global
 ```
 
 Expected output:
 
 ```
-Installing templates from https://github.com/your-company/global-standards...
+Installing templates from https://github.com/troylar/devsync-starter-templates...
 Namespace: company
 Scope: global
 
@@ -123,9 +123,9 @@ devsync template list
 Installed Templates:
 
 Namespace   Name                   Type         Scope    Source
-company     coding-conventions     instruction  global   github.com/your-company/global-standards
-company     security-policy        instruction  global   github.com/your-company/global-standards
-company     commit-standards       instruction  global   github.com/your-company/global-standards
+company     coding-conventions     instruction  global   github.com/troylar/devsync-starter-templates
+company     security-policy        instruction  global   github.com/troylar/devsync-starter-templates
+company     commit-standards       instruction  global   github.com/troylar/devsync-starter-templates
 ```
 
 ---
@@ -147,13 +147,13 @@ cd backend-api
 Project-specific templates contain conventions unique to this codebase: API design patterns, database conventions, deployment procedures, and so on.
 
 ```bash
-devsync template install https://github.com/your-company/backend-templates --as backend
+devsync template install https://github.com/troylar/devsync-python-package --as backend
 ```
 
 Expected output:
 
 ```
-Installing templates from https://github.com/your-company/backend-templates...
+Installing templates from https://github.com/troylar/devsync-python-package...
 Namespace: backend
 
 Installed:
@@ -175,13 +175,13 @@ Installed:
 MCP (Model Context Protocol) servers extend your AI assistant with additional capabilities like GitHub API access, database queries, or file system operations. Your team distributes MCP configurations via Git, and DevSync handles installation and credential management.
 
 ```bash
-devsync mcp install https://github.com/your-company/mcp-servers --as team-mcp
+devsync mcp install https://github.com/troylar/devsync-python-package --as team-mcp
 ```
 
 Expected output:
 
 ```
-Installing MCP template from https://github.com/your-company/mcp-servers...
+Installing MCP template from https://github.com/troylar/devsync-python-package...
 Namespace: team-mcp
 
 MCP servers found:
@@ -303,13 +303,13 @@ Expected output:
 Installed Templates:
 
 Namespace   Name                   Type         Scope    Source
-company     coding-conventions     instruction  global   github.com/your-company/global-standards
-company     security-policy        instruction  global   github.com/your-company/global-standards
-company     commit-standards       instruction  global   github.com/your-company/global-standards
-backend     api-design             instruction  project  github.com/your-company/backend-templates
-backend     database-patterns      instruction  project  github.com/your-company/backend-templates
-backend     review-pr              command      project  github.com/your-company/backend-templates
-backend     run-migrations         command      project  github.com/your-company/backend-templates
+company     coding-conventions     instruction  global   github.com/troylar/devsync-starter-templates
+company     security-policy        instruction  global   github.com/troylar/devsync-starter-templates
+company     commit-standards       instruction  global   github.com/troylar/devsync-starter-templates
+backend     api-design             instruction  project  github.com/troylar/devsync-python-package
+backend     database-patterns      instruction  project  github.com/troylar/devsync-python-package
+backend     review-pr              command      project  github.com/troylar/devsync-python-package
+backend     run-migrations         command      project  github.com/troylar/devsync-python-package
 ```
 
 ### Check installed packages (if any)
@@ -379,19 +379,19 @@ devsync tools
 # Step 3: Install global standards
 echo ""
 echo "--- Installing company-wide standards ---"
-devsync template install https://github.com/your-company/global-standards \
+devsync template install https://github.com/troylar/devsync-starter-templates \
   --as company --scope global --force
 
 # Step 4: Project setup (run from within the project directory)
 echo ""
 echo "--- Installing project templates ---"
-devsync template install https://github.com/your-company/backend-templates \
+devsync template install https://github.com/troylar/devsync-python-package \
   --as backend --force
 
 # Step 5: Install MCP servers
 echo ""
 echo "--- Installing MCP servers ---"
-devsync mcp install https://github.com/your-company/mcp-servers \
+devsync mcp install https://github.com/troylar/devsync-python-package \
   --as team-mcp --force
 
 # Step 6: Configure credentials (interactive)

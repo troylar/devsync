@@ -28,7 +28,7 @@ Detected AI Tools:
 Download a repository of instructions to your local library:
 
 ```bash
-$ devsync download --from github.com/company/coding-standards --as company
+$ devsync download --from https://github.com/troylar/devsync-starter-templates --as starter
 ```
 
 This clones the repo to `~/.devsync/library/company/`. The `--as` flag sets a friendly alias.

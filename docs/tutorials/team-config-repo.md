@@ -13,7 +13,7 @@
 A Git-hosted configuration repository containing coding standards, slash commands, and hooks that your entire team can install with a single command. By the end of this tutorial, any team member can run:
 
 ```bash
-devsync template install https://github.com/your-org/team-standards --as team
+devsync template install https://github.com/troylar/devsync-starter-templates --as team
 ```
 
 ...and immediately have your team's conventions loaded into their AI assistant.
@@ -302,7 +302,7 @@ git init
 git add .
 git commit -m "feat: initial team standards with Python conventions and review command"
 
-gh repo create your-org/team-standards --public --source=. --remote=origin --push
+gh repo create troylar/devsync-starter-templates --public --source=. --remote=origin --push
 ```
 
 !!! tip "Private repositories"
@@ -323,13 +323,13 @@ Share the installation command with your team. Each member runs this in their pr
 
 ```bash
 cd ~/projects/my-project
-devsync template install https://github.com/your-org/team-standards --as team
+devsync template install https://github.com/troylar/devsync-starter-templates --as team
 ```
 
 Expected output:
 
 ```
-Installing templates from https://github.com/your-org/team-standards...
+Installing templates from https://github.com/troylar/devsync-starter-templates...
 Namespace: team
 
 Installed:
@@ -346,7 +346,7 @@ The namespace prefix (`team.`) prevents conflicts if team members also have pers
 For standards that should apply across all projects (not just one), use the `--scope global` flag:
 
 ```bash
-devsync template install https://github.com/your-org/team-standards --as team --scope global
+devsync template install https://github.com/troylar/devsync-starter-templates --as team --scope global
 ```
 
 This installs to `~/.claude/rules/` instead of the project-level `.claude/rules/`.
@@ -363,8 +363,8 @@ Expected output:
 Installed Templates:
 
 Namespace   Name                Type         Scope    Source
-team        python-standards    instruction  project  github.com/your-org/team-standards
-team        review-code         command      project  github.com/your-org/team-standards
+team        python-standards    instruction  project  github.com/troylar/devsync-starter-templates
+team        review-code         command      project  github.com/troylar/devsync-starter-templates
 ```
 
 ---
@@ -403,7 +403,7 @@ devsync template update team
 Expected output:
 
 ```
-Updating namespace 'team' from https://github.com/your-org/team-standards...
+Updating namespace 'team' from https://github.com/troylar/devsync-starter-templates...
 
 Updated:
   team.python-standards  (1.0.0 -> 1.1.0)
@@ -457,7 +457,7 @@ my-project/
 This means the namespace is already installed. Use `--force` to overwrite:
 
 ```bash
-devsync template install https://github.com/your-org/team-standards --as team --force
+devsync template install https://github.com/troylar/devsync-starter-templates --as team --force
 ```
 
 ### Files not appearing after install
