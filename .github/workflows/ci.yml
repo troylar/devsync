@@ -98,7 +98,9 @@ jobs:
         run: npm install -g snyk
 
       - name: Run Snyk to check for vulnerabilities
-        run: snyk test --severity-threshold=high --package-manager=pip --file=pyproject.toml
+        run: |
+          pip freeze > requirements.txt
+          snyk test --severity-threshold=high --file=requirements.txt --package-manager=pip
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
