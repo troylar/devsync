@@ -187,6 +187,27 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
             "Slash commands in .roo/commands/. Global rules at ~/.roo/rules/."
         ),
     ),
+    AIToolType.CODEX: IDECapability(
+        tool_type=AIToolType.CODEX,
+        tool_name="OpenAI Codex CLI",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",  # AGENTS.md at project root
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=None,
+        hooks_directory=None,
+        commands_directory=None,
+        notes=(
+            "OpenAI Codex CLI uses a single AGENTS.md file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers. "
+            "No MCP, hooks, or commands support."
+        ),
+    ),
     AIToolType.COPILOT: IDECapability(
         tool_type=AIToolType.COPILOT,
         tool_name="GitHub Copilot",

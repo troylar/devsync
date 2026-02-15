@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-02-14
+
+### Added
+- **OpenAI Codex CLI Support** - Added support for the OpenAI Codex CLI (#37)
+  - Instructions managed via section markers in `AGENTS.md` at project root
+  - Section-based install/uninstall using HTML comment markers (`<!-- devsync:start:name -->`)
+  - Multiple instructions coexist in a single file without conflicts
+  - Detection via `codex` binary on PATH
+  - Package system support for instructions and resources
+  - IDE capability registry entry for Codex CLI
+  - Component detector recognizes `AGENTS.md` files
+
 ## [0.7.0] - 2026-02-14
 
 ### Changed

@@ -5,6 +5,7 @@ from typing import Optional
 from devsync.ai_tools.base import AITool
 from devsync.ai_tools.claude import ClaudeTool
 from devsync.ai_tools.cline import ClineTool
+from devsync.ai_tools.codex import CodexTool
 from devsync.ai_tools.copilot import CopilotTool
 from devsync.ai_tools.cursor import CursorTool
 from devsync.ai_tools.kiro import KiroTool
@@ -26,6 +27,7 @@ class AIToolDetector:
             AIToolType.KIRO: KiroTool(),
             AIToolType.CLINE: ClineTool(),
             AIToolType.ROO: RooTool(),
+            AIToolType.CODEX: CodexTool(),
         }
 
     def detect_installed_tools(self) -> list[AITool]:
@@ -87,6 +89,7 @@ class AIToolDetector:
             AIToolType.KIRO,
             AIToolType.CLINE,
             AIToolType.ROO,
+            AIToolType.CODEX,
         ]
 
         for tool_type in priority:

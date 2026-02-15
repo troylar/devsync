@@ -30,6 +30,7 @@ ai-config-kit/
 │   ├── kiro.py       # Kiro (.kiro/steering/*.md)
 │   ├── roo.py        # Roo Code (.roo/rules/*.md)
 │   ├── winsurf.py    # Windsurf (.windsurf/rules/*.md)
+│   ├── codex.py      # OpenAI Codex CLI (AGENTS.md sections)
 │   ├── copilot.py    # GitHub Copilot (.github/instructions/*.md)
 │   └── detector.py   # Tool detection logic
 ├── cli/               # Typer CLI commands
@@ -395,6 +396,7 @@ aiconfig package uninstall package-name --yes
 Different IDEs support different component types:
 - **Claude Code**: All components (instructions, MCP, hooks, commands, resources)
 - **Cline**: Instructions and resources only
+- **Codex CLI**: Instructions and resources only (via AGENTS.md sections)
 - **Cursor**: Instructions and resources only
 - **Kiro**: Instructions and resources only
 - **Roo Code**: Instructions, MCP, commands, and resources
@@ -407,6 +409,7 @@ Unsupported components are automatically skipped and counted separately.
 Components are translated to IDE-specific formats:
 - **Claude Code**: `.md` files in `.claude/rules/`, `.claude/hooks/`, `.claude/commands/`
 - **Cline**: `.md` files in `.clinerules/`
+- **Codex CLI**: Sections in `AGENTS.md` at project root (using HTML comment markers)
 - **Cursor**: `.mdc` files in `.cursor/rules/`
 - **Roo Code**: `.md` files in `.roo/rules/`, `.roo/commands/`
 - **Kiro**: `.md` files in `.kiro/steering/`

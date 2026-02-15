@@ -16,6 +16,7 @@ class AIToolType(Enum):
     KIRO = "kiro"
     CLINE = "cline"
     ROO = "roo"
+    CODEX = "codex"
 
 
 class ConflictResolution(Enum):
@@ -416,7 +417,7 @@ class TemplateFile:
         """Validate template file data."""
         if not self.path:
             raise ValueError("Template file path cannot be empty")
-        valid_ides = ["all", "cursor", "claude", "windsurf", "copilot", "kiro", "cline", "roo"]
+        valid_ides = ["all", "cursor", "claude", "windsurf", "copilot", "kiro", "cline", "roo", "codex"]
         if self.ide not in valid_ides:
             raise ValueError(f"Invalid IDE type: {self.ide}. Must be one of {valid_ides}")
 

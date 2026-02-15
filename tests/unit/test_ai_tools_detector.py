@@ -76,6 +76,7 @@ def mock_all_tools_installed(monkeypatch, temp_dir):
     (home_dir / ".claude" / "rules").mkdir(parents=True)
 
     monkeypatch.setattr("devsync.utils.paths.get_home_directory", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.codex.shutil.which", lambda cmd: "/usr/local/bin/codex")
 
 
 class TestAIToolDetector:
@@ -83,7 +84,7 @@ class TestAIToolDetector:
 
     def test_init_creates_all_tools(self, detector):
         """Test that detector initializes with all supported tools."""
-        assert len(detector.tools) == 7
+        assert len(detector.tools) == 8
         assert AIToolType.CURSOR in detector.tools
         assert AIToolType.COPILOT in detector.tools
         assert AIToolType.WINSURF in detector.tools
@@ -91,6 +92,7 @@ class TestAIToolDetector:
         assert AIToolType.KIRO in detector.tools
         assert AIToolType.CLINE in detector.tools
         assert AIToolType.ROO in detector.tools
+        assert AIToolType.CODEX in detector.tools
 
     def test_detect_installed_tools_none(self, temp_dir, monkeypatch):
         """Test detect_installed_tools when no tools are installed."""
@@ -108,7 +110,7 @@ class TestAIToolDetector:
         # Create fresh detector with mocked paths
         detector = AIToolDetector()
         installed = detector.detect_installed_tools()
-        assert len(installed) == 7
+        assert len(installed) == 8
 
     def test_get_tool_by_name_valid(self, detector):
         """Test get_tool_by_name with valid tool name."""
@@ -197,7 +199,7 @@ class TestAIToolDetector:
     def test_get_tool_names(self, detector):
         """Test get_tool_names returns all tool names."""
         names = detector.get_tool_names()
-        assert len(names) == 7
+        assert len(names) == 8
         assert "cursor" in names
         assert "copilot" in names
         assert "winsurf" in names
@@ -205,6 +207,7 @@ class TestAIToolDetector:
         assert "kiro" in names
         assert "cline" in names
         assert "roo" in names
+        assert "codex" in names
 
     def test_validate_tool_name_valid(self, detector):
         """Test validate_tool_name with valid name."""
@@ -219,7 +222,7 @@ class TestAIToolDetector:
         """Test get_detection_summary."""
         detector = AIToolDetector()
         summary = detector.get_detection_summary()
-        assert len(summary) == 7
+        assert len(summary) == 8
         assert all(isinstance(v, bool) for v in summary.values())
 
     def test_format_detection_summary(self, mock_all_tools_installed):

@@ -241,6 +241,7 @@ class ComponentDetector:
     # Single-file instruction locations (not directories)
     SINGLE_INSTRUCTION_FILES = {
         ".github/copilot-instructions.md": "copilot",
+        "AGENTS.md": "codex",
     }
 
     INSTRUCTION_EXTENSIONS = {".md", ".mdc", ".instructions.md"}

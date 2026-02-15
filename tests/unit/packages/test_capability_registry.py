@@ -70,6 +70,7 @@ class TestCapabilityRegistry:
         assert AIToolType.KIRO in CAPABILITY_REGISTRY
         assert AIToolType.CLINE in CAPABILITY_REGISTRY
         assert AIToolType.ROO in CAPABILITY_REGISTRY
+        assert AIToolType.CODEX in CAPABILITY_REGISTRY
 
     def test_cursor_capabilities(self) -> None:
         """Test Cursor IDE capabilities."""
@@ -248,7 +249,7 @@ class TestCapabilityRegistry:
         tools = get_supported_tools_for_component(ComponentType.INSTRUCTION)
 
         # All tools support instructions
-        assert len(tools) == 7
+        assert len(tools) == 8
         assert AIToolType.CURSOR in tools
         assert AIToolType.CLAUDE in tools
         assert AIToolType.WINSURF in tools
@@ -256,6 +257,7 @@ class TestCapabilityRegistry:
         assert AIToolType.KIRO in tools
         assert AIToolType.CLINE in tools
         assert AIToolType.ROO in tools
+        assert AIToolType.CODEX in tools
 
     def test_get_supported_tools_for_mcp_server(self) -> None:
         """Test getting tools that support MCP servers."""
@@ -290,14 +292,15 @@ class TestCapabilityRegistry:
         """Test getting tools that support resources."""
         tools = get_supported_tools_for_component(ComponentType.RESOURCE)
 
-        # Cursor, Claude, Windsurf, Kiro, Cline, and Roo Code support resources (not Copilot)
-        assert len(tools) == 6
+        # Cursor, Claude, Windsurf, Kiro, Cline, Roo Code, and Codex support resources (not Copilot)
+        assert len(tools) == 7
         assert AIToolType.CURSOR in tools
         assert AIToolType.CLAUDE in tools
         assert AIToolType.WINSURF in tools
         assert AIToolType.KIRO in tools
         assert AIToolType.CLINE in tools
         assert AIToolType.ROO in tools
+        assert AIToolType.CODEX in tools
         assert AIToolType.COPILOT not in tools  # Instructions only
 
     def test_validate_component_support_true(self) -> None:
