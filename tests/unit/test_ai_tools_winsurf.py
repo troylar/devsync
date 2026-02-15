@@ -1,5 +1,7 @@
 """Tests for Winsurf AI tool integration."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.winsurf import WinsurfTool
@@ -24,7 +26,7 @@ def mock_winsurf_installed(monkeypatch, temp_dir):
     if os.name == "nt":  # Windows
         winsurf_dir = home_dir / "AppData" / "Roaming" / "Windsurf" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             winsurf_dir = home_dir / "Library" / "Application Support" / "Windsurf" / "User" / "globalStorage"
         else:  # Linux
             winsurf_dir = home_dir / ".config" / "Windsurf" / "User" / "globalStorage"

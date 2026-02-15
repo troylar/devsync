@@ -1,5 +1,7 @@
 """Tests for Cline AI tool integration."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.cline import ClineTool
@@ -24,7 +26,7 @@ def mock_cline_installed(monkeypatch, temp_dir):
     if os.name == "nt":  # Windows
         cline_dir = home_dir / "AppData" / "Roaming" / "Code" / "User" / "globalStorage" / "saoudrizwan.claude-dev"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             cline_dir = (
                 home_dir
                 / "Library"

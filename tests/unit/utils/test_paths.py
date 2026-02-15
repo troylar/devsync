@@ -37,21 +37,21 @@ class TestGetHomeDirectory:
 class TestGetCursorConfigDir:
     """Test get_cursor_config_dir function."""
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_cursor_config_macos(self, mock_uname: MagicMock) -> None:
+    def test_cursor_config_macos(self, mock_sys: MagicMock) -> None:
         """Test Cursor config directory on macOS."""
-        mock_uname.return_value = MagicMock(sysname="Darwin")
+        mock_sys.platform = "darwin"
         config_dir = get_cursor_config_dir()
         assert "Library/Application Support/Cursor" in str(config_dir)
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_cursor_config_linux(self, mock_uname: MagicMock) -> None:
+    def test_cursor_config_linux(self, mock_sys: MagicMock) -> None:
         """Test Cursor config directory on Linux."""
-        mock_uname.return_value = MagicMock(sysname="Linux")
+        mock_sys.platform = "linux"
         config_dir = get_cursor_config_dir()
         assert ".config/Cursor" in str(config_dir)
 
@@ -66,22 +66,22 @@ class TestGetCursorConfigDir:
 class TestGetCopilotConfigDir:
     """Test get_copilot_config_dir function."""
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_copilot_config_macos(self, mock_uname: MagicMock) -> None:
+    def test_copilot_config_macos(self, mock_sys: MagicMock) -> None:
         """Test Copilot config directory on macOS."""
-        mock_uname.return_value = MagicMock(sysname="Darwin")
+        mock_sys.platform = "darwin"
         config_dir = get_copilot_config_dir()
         assert "Library/Application Support/Code" in str(config_dir)
         assert "github.copilot" in str(config_dir)
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_copilot_config_linux(self, mock_uname: MagicMock) -> None:
+    def test_copilot_config_linux(self, mock_sys: MagicMock) -> None:
         """Test Copilot config directory on Linux."""
-        mock_uname.return_value = MagicMock(sysname="Linux")
+        mock_sys.platform = "linux"
         config_dir = get_copilot_config_dir()
         assert ".config/Code" in str(config_dir)
         assert "github.copilot" in str(config_dir)
@@ -99,21 +99,21 @@ class TestGetCopilotConfigDir:
 class TestGetWinsurfConfigDir:
     """Test get_winsurf_config_dir function."""
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_winsurf_config_macos(self, mock_uname: MagicMock) -> None:
+    def test_winsurf_config_macos(self, mock_sys: MagicMock) -> None:
         """Test Windsurf config directory on macOS."""
-        mock_uname.return_value = MagicMock(sysname="Darwin")
+        mock_sys.platform = "darwin"
         config_dir = get_winsurf_config_dir()
         assert "Library/Application Support/Windsurf" in str(config_dir)
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_winsurf_config_linux(self, mock_uname: MagicMock) -> None:
+    def test_winsurf_config_linux(self, mock_sys: MagicMock) -> None:
         """Test Windsurf config directory on Linux."""
-        mock_uname.return_value = MagicMock(sysname="Linux")
+        mock_sys.platform = "linux"
         config_dir = get_winsurf_config_dir()
         assert ".config/Windsurf" in str(config_dir)
 
@@ -138,22 +138,22 @@ class TestGetClaudeConfigDir:
 class TestGetClaudeDesktopConfigPath:
     """Test get_claude_desktop_config_path function."""
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_claude_desktop_config_macos(self, mock_uname: MagicMock) -> None:
+    def test_claude_desktop_config_macos(self, mock_sys: MagicMock) -> None:
         """Test Claude Desktop config path on macOS."""
-        mock_uname.return_value = MagicMock(sysname="Darwin")
+        mock_sys.platform = "darwin"
         config_path = get_claude_desktop_config_path()
         assert "Library/Application Support/Claude" in str(config_path)
         assert "claude_desktop_config.json" in str(config_path)
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_claude_desktop_config_linux(self, mock_uname: MagicMock) -> None:
+    def test_claude_desktop_config_linux(self, mock_sys: MagicMock) -> None:
         """Test Claude Desktop config path on Linux."""
-        mock_uname.return_value = MagicMock(sysname="Linux")
+        mock_sys.platform = "linux"
         config_path = get_claude_desktop_config_path()
         assert ".config/Claude" in str(config_path)
         assert "claude_desktop_config.json" in str(config_path)
@@ -177,12 +177,12 @@ class TestGetClaudeDesktopConfigPath:
 class TestGetCursorMcpConfigPath:
     """Test get_cursor_mcp_config_path function."""
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_cursor_mcp_config_path(self, mock_uname: MagicMock) -> None:
+    def test_cursor_mcp_config_path(self, mock_sys: MagicMock) -> None:
         """Test Cursor MCP config path."""
-        mock_uname.return_value = MagicMock(sysname="Darwin")
+        mock_sys.platform = "darwin"
         config_path = get_cursor_mcp_config_path()
         assert "mcp_config.json" in str(config_path)
         assert "Cursor" in str(config_path)
@@ -191,12 +191,12 @@ class TestGetCursorMcpConfigPath:
 class TestGetWinsurfMcpConfigPath:
     """Test get_windsurf_mcp_config_path function."""
 
-    @pytest.mark.skipif(os.name == "nt", reason="os.uname not available on Windows")
+    @pytest.mark.skipif(os.name == "nt", reason="Cannot mock posix paths on Windows")
+    @patch("devsync.utils.paths.sys")
     @patch("os.name", "posix")
-    @patch("os.uname")
-    def test_windsurf_mcp_config_path(self, mock_uname: MagicMock) -> None:
+    def test_windsurf_mcp_config_path(self, mock_sys: MagicMock) -> None:
         """Test Windsurf MCP config path."""
-        mock_uname.return_value = MagicMock(sysname="Darwin")
+        mock_sys.platform = "darwin"
         config_path = get_windsurf_mcp_config_path()
         assert "mcp_config.json" in str(config_path)
         assert "Windsurf" in str(config_path)

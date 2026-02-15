@@ -1,5 +1,7 @@
 """Tests for Roo Code AI tool integration."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.roo import RooTool
@@ -24,7 +26,7 @@ def mock_roo_installed(monkeypatch, temp_dir):
     if os.name == "nt":  # Windows
         roo_dir = home_dir / "AppData" / "Roaming" / "Code" / "User" / "globalStorage" / "rooveterinaryinc.roo-cline"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             roo_dir = (
                 home_dir
                 / "Library"

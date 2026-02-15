@@ -1,5 +1,7 @@
 """Tests for CLI tools command."""
 
+import sys
+
 import pytest
 
 from devsync.cli.tools import show_tools
@@ -18,7 +20,7 @@ def mock_detector_with_tools(monkeypatch, temp_dir):
         cursor_dir = home_dir / "AppData" / "Roaming" / "Cursor" / "User" / "globalStorage"
         winsurf_dir = home_dir / "AppData" / "Roaming" / "Windsurf" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             cursor_dir = home_dir / "Library" / "Application Support" / "Cursor" / "User" / "globalStorage"
             winsurf_dir = home_dir / "Library" / "Application Support" / "Windsurf" / "User" / "globalStorage"
         else:  # Linux

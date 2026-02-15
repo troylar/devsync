@@ -1,5 +1,7 @@
 """Tests for GitHub Copilot AI tool integration."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.copilot import CopilotTool
@@ -24,7 +26,7 @@ def mock_copilot_installed(monkeypatch, temp_dir):
     if os.name == "nt":  # Windows
         copilot_dir = home_dir / "AppData" / "Roaming" / "Code" / "User" / "globalStorage" / "github.copilot"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             copilot_dir = (
                 home_dir / "Library" / "Application Support" / "Code" / "User" / "globalStorage" / "github.copilot"
             )

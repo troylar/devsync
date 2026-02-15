@@ -1,5 +1,7 @@
 """Tests for Kiro AI tool integration."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.kiro import KiroTool
@@ -24,7 +26,7 @@ def mock_kiro_installed(monkeypatch, temp_dir):
     if os.name == "nt":  # Windows
         kiro_dir = home_dir / "AppData" / "Roaming" / "Kiro" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             kiro_dir = home_dir / "Library" / "Application Support" / "Kiro" / "User" / "globalStorage"
         else:  # Linux
             kiro_dir = home_dir / ".config" / "Kiro" / "User" / "globalStorage"

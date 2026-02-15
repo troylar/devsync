@@ -1,6 +1,7 @@
 """Cross-platform path utilities for AI coding tool directories."""
 
 import os
+import sys
 from pathlib import Path
 from typing import Optional
 
@@ -17,7 +18,7 @@ def get_cursor_config_dir() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Cursor" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return home / "Library" / "Application Support" / "Cursor" / "User" / "globalStorage"
         else:  # Linux
             return home / ".config" / "Cursor" / "User" / "globalStorage"
@@ -32,7 +33,7 @@ def get_copilot_config_dir() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Code" / "User" / "globalStorage" / "github.copilot"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return home / "Library" / "Application Support" / "Code" / "User" / "globalStorage" / "github.copilot"
         else:  # Linux
             return home / ".config" / "Code" / "User" / "globalStorage" / "github.copilot"
@@ -47,7 +48,7 @@ def get_winsurf_config_dir() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Windsurf" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return home / "Library" / "Application Support" / "Windsurf" / "User" / "globalStorage"
         else:  # Linux
             return home / ".config" / "Windsurf" / "User" / "globalStorage"
@@ -62,7 +63,7 @@ def get_kiro_config_dir() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Kiro" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return home / "Library" / "Application Support" / "Kiro" / "User" / "globalStorage"
         else:  # Linux
             return home / ".config" / "Kiro" / "User" / "globalStorage"
@@ -77,7 +78,7 @@ def get_cline_config_dir() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Code" / "User" / "globalStorage" / "saoudrizwan.claude-dev"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return (
                 home / "Library" / "Application Support" / "Code" / "User" / "globalStorage" / "saoudrizwan.claude-dev"
             )
@@ -94,7 +95,7 @@ def get_roo_config_dir() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Code" / "User" / "globalStorage" / "rooveterinaryinc.roo-cline"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return (
                 home
                 / "Library"
@@ -126,7 +127,7 @@ def get_claude_desktop_config_path() -> Path:
     if os.name == "nt":  # Windows
         return home / "AppData" / "Roaming" / "Claude" / "claude_desktop_config.json"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             return home / "Library" / "Application Support" / "Claude" / "claude_desktop_config.json"
         else:  # Linux
             return home / ".config" / "Claude" / "claude_desktop_config.json"

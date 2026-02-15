@@ -1,5 +1,7 @@
 """Tests for Cursor AI tool integration."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.cursor import CursorTool
@@ -24,7 +26,7 @@ def mock_cursor_installed(monkeypatch, temp_dir):
     if os.name == "nt":  # Windows
         cursor_dir = home_dir / "AppData" / "Roaming" / "Cursor" / "User" / "globalStorage"
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             cursor_dir = home_dir / "Library" / "Application Support" / "Cursor" / "User" / "globalStorage"
         else:  # Linux
             cursor_dir = home_dir / ".config" / "Cursor" / "User" / "globalStorage"

@@ -1,5 +1,7 @@
 """Tests for AI tool detector."""
 
+import sys
+
 import pytest
 
 from devsync.ai_tools.detector import AIToolDetector, get_detector
@@ -33,7 +35,7 @@ def mock_all_tools_installed(monkeypatch, temp_dir):
             parents=True
         )
     elif os.name == "posix":
-        if "darwin" in os.uname().sysname.lower():  # macOS
+        if sys.platform == "darwin":  # macOS
             (home_dir / "Library" / "Application Support" / "Cursor" / "User" / "globalStorage").mkdir(parents=True)
             (home_dir / "Library" / "Application Support" / "Code" / "User" / "globalStorage" / "github.copilot").mkdir(
                 parents=True
@@ -92,7 +94,7 @@ def mock_all_tools_installed(monkeypatch, temp_dir):
     monkeypatch.setattr("devsync.ai_tools.amazonq.Path.home", lambda: home_dir)
 
     # JetBrains detection: config directory exists
-    if "darwin" in os.uname().sysname.lower():
+    if sys.platform == "darwin":
         (home_dir / "Library" / "Application Support" / "JetBrains").mkdir(parents=True, exist_ok=True)
     else:
         (home_dir / ".config" / "JetBrains").mkdir(parents=True, exist_ok=True)
@@ -245,7 +247,7 @@ class TestAIToolDetector:
             cursor_dir = home_dir / "AppData" / "Roaming" / "Cursor" / "User" / "globalStorage"
             windsurf_dir = home_dir / "AppData" / "Roaming" / "Windsurf" / "User" / "globalStorage"
         elif os.name == "posix":
-            if "darwin" in os.uname().sysname.lower():  # macOS
+            if sys.platform == "darwin":  # macOS
                 cursor_dir = home_dir / "Library" / "Application Support" / "Cursor" / "User" / "globalStorage"
                 windsurf_dir = home_dir / "Library" / "Application Support" / "Windsurf" / "User" / "globalStorage"
             else:  # Linux
