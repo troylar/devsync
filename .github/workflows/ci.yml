@@ -94,6 +94,13 @@ jobs:
         run: invoke security-check
         continue-on-error: true
 
+      - name: Run Snyk to check for vulnerabilities
+        uses: snyk/actions/python-3.10@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
   dependency-review:
     name: Dependency Review
     runs-on: ubuntu-latest
