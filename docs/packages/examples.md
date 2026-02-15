@@ -1,944 +1,696 @@
 # Package Examples
 
-**Real-world package examples for common development scenarios**
-
-This guide provides complete, ready-to-use package examples for various technologies and workflows. Each example includes the full manifest, component files, and usage instructions.
-
-## Table of Contents
-
-- [Python Development](#python-development)
-- [JavaScript/TypeScript](#javascripttypescript)
-- [Web Frameworks](#web-frameworks)
-- [Testing & Quality](#testing--quality)
-- [DevOps & Deployment](#devops--deployment)
-- [Multi-Language Packages](#multi-language-packages)
+Four complete package examples covering common use cases. Each includes the full manifest, directory structure, and representative component files.
 
 ---
 
-## Python Development
+## 1. Python Development Setup
 
-### Example 1: Python Best Practices
+A package for Python projects that enforces coding standards with instructions, automates quality checks with hooks, and provides convenience commands.
 
-Complete Python development setup with style, testing, and type checking.
+### Directory Structure
 
-**Package structure:**
 ```
-python-best-practices/
+python-dev-setup/
 ├── ai-config-kit-package.yaml
-├── README.md
 ├── instructions/
-│   ├── style-guide.md
-│   ├── type-hints.md
-│   └── testing.md
+│   ├── python-style.md
+│   ├── testing-strategy.md
+│   └── error-handling.md
 ├── hooks/
 │   └── pre-commit.sh
 ├── commands/
 │   ├── test.sh
 │   └── lint.sh
 └── resources/
-    ├── .gitignore
-    └── pyproject.toml
+    └── .gitignore
 ```
 
-**Manifest** (`ai-config-kit-package.yaml`):
+### Manifest
+
 ```yaml
-name: python-best-practices
+name: python-dev-setup
 version: 1.0.0
-description: Complete Python development best practices and tooling
-author: Python Team
-author_email: python@example.com
-namespace: python/development
+description: Python development standards with linting, testing, and code quality
+author: Platform Team
 license: MIT
-keywords: [python, best-practices, testing, type-checking]
+namespace: platform/python
 
 components:
   instructions:
-    - name: style-guide
-      description: PEP 8 style guidelines with modern Python patterns
-      file: instructions/style-guide.md
-      tags: [python, style, pep8]
+    - name: python-style
+      file: instructions/python-style.md
+      description: PEP 8 conventions with project-specific rules
+      tags: [python, style, formatting]
 
-    - name: type-hints
-      description: Type hinting best practices with mypy
-      file: instructions/type-hints.md
-      tags: [python, typing, mypy]
-
-    - name: testing
-      description: Testing strategies with pytest and coverage
-      file: instructions/testing.md
+    - name: testing-strategy
+      file: instructions/testing-strategy.md
+      description: pytest patterns, fixtures, and coverage requirements
       tags: [python, testing, pytest]
+
+    - name: error-handling
+      file: instructions/error-handling.md
+      description: Exception handling and error reporting patterns
+      tags: [python, errors, logging]
 
   hooks:
     - name: pre-commit
-      description: Run black, ruff, and mypy before commits
       file: hooks/pre-commit.sh
-      tags: [git, python, quality]
+      description: Run black, ruff, and mypy before every commit
+      hook_type: pre-commit
 
   commands:
     - name: test
-      description: Run pytest with coverage reporting
       file: commands/test.sh
-      tags: [testing, pytest]
+      description: Run pytest with coverage and HTML report
+      command_type: shell
 
     - name: lint
-      description: Run ruff linter with auto-fix
       file: commands/lint.sh
-      tags: [linting, code-quality]
+      description: Run ruff with auto-fix enabled
+      command_type: shell
 
   resources:
     - name: gitignore
-      description: Python-specific .gitignore
       file: resources/.gitignore
+      description: Python-specific gitignore
       install_path: .gitignore
-      tags: [git, python]
-
-    - name: pyproject
-      description: Standard pyproject.toml configuration
-      file: resources/pyproject.toml
-      install_path: pyproject.toml
-      tags: [python, config]
+      checksum: sha256:a1b2c3d4e5f6...
+      size: 320
 ```
 
-**Instruction example** (`instructions/style-guide.md`):
+### Key Files
+
+**`instructions/python-style.md`**
+
 ```markdown
 # Python Style Guide
 
-Follow PEP 8 and modern Python best practices.
-
-## Line Length
-
-- **Maximum**: 120 characters (not 79)
-- **Docstrings**: 72 characters
-
 ## Formatting
 
-Use `black` for automatic formatting:
-```bash
-black .
-```
+- Line length: 120 characters maximum
+- Indentation: 4 spaces, no tabs
+- Formatter: black (run automatically via pre-commit hook)
+- Linter: ruff with rule sets E, F, I, N, W
+
+## Type Hints
+
+All functions must include type hints:
+
+    def process_items(items: list[dict[str, str]], limit: int = 10) -> list[str]:
+        """Extract names from item dictionaries."""
+        return [item["name"] for item in items[:limit]]
+
+Use modern syntax (Python 3.10+): `list[str]` not `List[str]`,
+`str | None` not `Optional[str]`.
 
 ## Import Order
 
 1. Standard library
 2. Third-party packages
-3. Local application/library
+3. Local application modules
 
-Example:
-```python
-import os
-from pathlib import Path
+Each group separated by a blank line. Use `ruff` to enforce ordering.
 
-import requests
-from django.conf import settings
+## Naming
 
-from myapp.models import User
-from myapp.utils import helper
+| Element    | Convention       | Example            |
+|------------|------------------|--------------------|
+| Variables  | snake_case       | user_count         |
+| Functions  | snake_case       | get_active_users   |
+| Classes    | PascalCase       | UserAccount        |
+| Constants  | UPPER_SNAKE_CASE | MAX_RETRY_COUNT    |
+| Private    | _leading_under   | _validate_input    |
 ```
 
-## Naming Conventions
+**`hooks/pre-commit.sh`**
 
-| Type | Convention | Example |
-|------|------------|---------|
-| Variables | `snake_case` | `user_count` |
-| Functions | `snake_case` | `get_user_by_id` |
-| Classes | `PascalCase` | `UserProfile` |
-| Constants | `UPPER_CASE` | `MAX_CONNECTIONS` |
-| Private | `_leading_underscore` | `_internal_method` |
-
-## Type Hints
-
-Always use type hints for function signatures:
-
-```python
-def process_users(users: list[dict], limit: int = 10) -> list[str]:
-    """Process user data and return usernames."""
-    return [u["name"] for u in users[:limit]]
-```
-```
-
-**Hook example** (`hooks/pre-commit.sh`):
 ```bash
 #!/usr/bin/env bash
-# Pre-commit hook for Python projects
-
 set -e
 
 echo "Running pre-commit checks..."
 
-# Black formatting
-echo "→ Checking formatting (black)..."
 if command -v black &> /dev/null; then
-    black --check . || {
-        echo "❌ Formatting issues found. Run 'black .' to fix."
-        exit 1
-    }
-else
-    echo "⚠️  black not installed"
+    echo "-> black (formatting)"
+    black --check . || { echo "Run 'black .' to fix."; exit 1; }
 fi
 
-# Ruff linting
-echo "→ Running linter (ruff)..."
 if command -v ruff &> /dev/null; then
-    ruff check . || {
-        echo "❌ Linting issues found. Run 'ruff check --fix .' to fix."
-        exit 1
-    }
-else
-    echo "⚠️  ruff not installed"
+    echo "-> ruff (linting)"
+    ruff check . || { echo "Run 'ruff check --fix .' to fix."; exit 1; }
 fi
 
-# Type checking
-echo "→ Type checking (mypy)..."
 if command -v mypy &> /dev/null; then
-    mypy . || {
-        echo "❌ Type errors found."
-        exit 1
-    }
-else
-    echo "⚠️  mypy not installed"
+    echo "-> mypy (type checking)"
+    mypy . || { echo "Fix type errors before committing."; exit 1; }
 fi
 
-echo "✓ All pre-commit checks passed!"
+echo "All checks passed."
 ```
 
-**Installation:**
+### Installation
+
 ```bash
-aiconfig package install ./python-best-practices --ide claude
+devsync package install ./python-dev-setup --ide claude
 ```
 
 ---
 
-### Example 2: Django Development
+## 2. Security Compliance Package
 
-Django-specific package with models, views, and deployment.
+A package focused on secure coding practices. Contains instructions covering OWASP guidelines and resource files for security tooling configuration.
 
-**Manifest** (`ai-config-kit-package.yaml`):
+### Directory Structure
+
+```
+security-compliance/
+├── ai-config-kit-package.yaml
+├── instructions/
+│   ├── secure-coding.md
+│   ├── authentication.md
+│   ├── input-validation.md
+│   └── dependency-management.md
+└── resources/
+    ├── .snyk
+    └── security-checklist.md
+```
+
+### Manifest
+
 ```yaml
-name: django-development
-version: 2.1.0
-description: Django best practices with ORM patterns and testing
-author: Django Team
-namespace: web-frameworks/django
-license: MIT
-keywords: [django, python, web, orm]
+name: security-compliance
+version: 1.1.0
+description: OWASP-aligned secure coding guidelines and security tooling
+author: Security Team
+license: Apache-2.0
+namespace: security/compliance
 
 components:
   instructions:
-    - name: django-models
-      description: Model design patterns and best practices
-      file: instructions/models.md
-      tags: [django, orm, models]
+    - name: secure-coding
+      file: instructions/secure-coding.md
+      description: Core secure coding principles (OWASP Top 10)
+      tags: [security, owasp, coding]
 
-    - name: django-views
-      description: CBV vs FBV and view patterns
-      file: instructions/views.md
-      tags: [django, views]
+    - name: authentication
+      file: instructions/authentication.md
+      description: Authentication and session management standards
+      tags: [security, auth, sessions]
 
-    - name: django-testing
-      description: Testing Django applications
-      file: instructions/testing.md
-      tags: [django, testing]
+    - name: input-validation
+      file: instructions/input-validation.md
+      description: Input validation, sanitization, and encoding rules
+      tags: [security, validation, injection]
 
-  hooks:
-    - name: pre-commit
-      description: Check migrations and run tests
-      file: hooks/pre-commit.sh
-      tags: [django, git]
-
-  commands:
-    - name: migrate
-      description: Run database migrations
-      file: commands/migrate.sh
-      tags: [django, database]
-
-    - name: test
-      description: Run Django test suite
-      file: commands/test.sh
-      tags: [django, testing]
+    - name: dependency-management
+      file: instructions/dependency-management.md
+      description: Dependency scanning and supply chain security
+      tags: [security, dependencies, sca]
 
   resources:
-    - name: settings-template
-      description: Django settings best practices
-      file: resources/settings.py
-      install_path: config/settings_template.py
-      tags: [django, config]
+    - name: snyk-config
+      file: resources/.snyk
+      description: Snyk vulnerability scanning configuration
+      install_path: .snyk
+      checksum: sha256:b2c3d4e5f6a7...
+      size: 180
+
+    - name: security-checklist
+      file: resources/security-checklist.md
+      description: Pre-deployment security review checklist
+      install_path: docs/security-checklist.md
+      checksum: sha256:c3d4e5f6a7b8...
+      size: 2400
 ```
 
-**Instruction example** (`instructions/models.md`):
+### Key Files
+
+**`instructions/secure-coding.md`**
+
 ```markdown
-# Django Model Best Practices
+# Secure Coding Standards
 
-## Model Design
+## Principles
 
-### Keep Models Focused
+1. Never trust user input. Validate on the server side.
+2. Use parameterized queries for all database operations. Never concatenate
+   user input into SQL strings.
+3. Encode output for its context (HTML, JavaScript, URL, SQL).
+4. Use established authentication libraries. Do not implement custom auth.
+5. Apply the principle of least privilege to all access control decisions.
 
-Each model should represent one entity:
+## Forbidden Patterns
 
-```python
-# Good: Focused model
-class User(models.Model):
-    email = models.EmailField(unique=True)
-    name = models.CharField(max_length=100)
-    created_at = models.DateTimeField(auto_now_add=True)
+The following patterns must never appear in code:
 
-# Bad: Too many responsibilities
-class User(models.Model):
-    # User data, settings, preferences, notifications all mixed
-    ...
+- `eval()`, `exec()`, `Function()` with user-controlled input
+- SQL string concatenation: `f"SELECT * FROM users WHERE id = {user_id}"`
+- `innerHTML` assignment with unsanitized data
+- Hardcoded secrets, API keys, or credentials
+- Disabled CSRF protection
+- `verify=False` or `rejectUnauthorized: false` in production code
+- Wildcard CORS: `Access-Control-Allow-Origin: *`
+
+## Error Handling
+
+- Return generic error messages to users
+- Log detailed errors server-side with timestamps, user IDs, and source IPs
+- Never expose stack traces, SQL errors, or internal paths in responses
+- Never log passwords, tokens, or PII
+
+## Cryptography
+
+- Passwords: Argon2id, bcrypt (cost >= 12), or scrypt
+- Symmetric encryption: AES-256-GCM or ChaCha20-Poly1305
+- TLS 1.2+ for all data in transit
+- Generate keys and IVs from the platform CSPRNG
+- Store secrets in environment variables or a secrets manager
 ```
 
-### Use Model Methods
+**`instructions/input-validation.md`**
 
-Add business logic to models:
+```markdown
+# Input Validation Rules
 
-```python
-class Order(models.Model):
-    total = models.DecimalField(max_digits=10, decimal_places=2)
-    tax_rate = models.DecimalField(max_digits=4, decimal_places=2)
+## Server-Side Validation
 
-    def calculate_tax(self) -> Decimal:
-        """Calculate tax amount."""
-        return self.total * self.tax_rate
+All input must be validated on the server. Client-side validation is for UX
+only and provides no security benefit.
 
-    def get_total_with_tax(self) -> Decimal:
-        """Get total including tax."""
-        return self.total + self.calculate_tax()
+## Validation Strategy
+
+Use allowlists (whitelists) over denylists:
+
+    # Good: allowlist
+    ALLOWED_STATUSES = {"active", "inactive", "pending"}
+    if status not in ALLOWED_STATUSES:
+        raise ValidationError(f"Invalid status: {status}")
+
+    # Bad: denylist
+    BLOCKED = {"admin", "root"}
+    if role in BLOCKED:
+        raise ValidationError("Blocked role")
+
+## Database Queries
+
+Always use parameterized queries:
+
+    # Good: parameterized
+    cursor.execute("SELECT * FROM users WHERE id = %s", (user_id,))
+
+    # Bad: string concatenation
+    cursor.execute(f"SELECT * FROM users WHERE id = {user_id}")
+
+## File Uploads
+
+- Validate MIME type and extension against an allowlist
+- Enforce maximum file size
+- Store uploaded files outside the web root
+- Generate random filenames; never use the original filename in the path
 ```
 
-### Index Strategic Fields
+### Installation
 
-Add indexes for frequently queried fields:
-
-```python
-class Article(models.Model):
-    title = models.CharField(max_length=200)
-    slug = models.SlugField(unique=True, db_index=True)
-    published_at = models.DateTimeField(db_index=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
-
-    class Meta:
-        indexes = [
-            models.Index(fields=['published_at', 'author']),
-        ]
-```
+```bash
+# Works with any IDE since it only contains instructions and resources
+devsync package install ./security-compliance --ide claude
+devsync package install ./security-compliance --ide cursor
+devsync package install ./security-compliance --ide windsurf
 ```
 
 ---
 
-## JavaScript/TypeScript
+## 3. Full-Stack Team Package
 
-### Example 3: React Development
+A comprehensive package for a team working on a full-stack application. Includes instructions for frontend and backend, MCP servers for tooling, hooks for quality gates, commands for common workflows, and resource files.
 
-React best practices with TypeScript and testing.
+### Directory Structure
 
-**Manifest** (`ai-config-kit-package.yaml`):
+```
+fullstack-team/
+├── ai-config-kit-package.yaml
+├── instructions/
+│   ├── api-design.md
+│   ├── react-components.md
+│   ├── database-patterns.md
+│   └── code-review.md
+├── mcp/
+│   ├── filesystem.json
+│   └── github.json
+├── hooks/
+│   └── pre-commit.sh
+├── commands/
+│   ├── test-all.sh
+│   └── dev.sh
+└── resources/
+    ├── .editorconfig
+    └── .prettierrc
+```
+
+### Manifest
+
 ```yaml
-name: react-typescript
-version: 3.0.0
-description: React + TypeScript development with best practices
-author: Frontend Team
-namespace: frontend/react
-license: MIT
-keywords: [react, typescript, frontend, components]
-
-components:
-  instructions:
-    - name: component-patterns
-      description: React component design patterns
-      file: instructions/components.md
-      tags: [react, components, patterns]
-
-    - name: typescript-types
-      description: TypeScript typing for React
-      file: instructions/typescript.md
-      tags: [react, typescript, types]
-
-    - name: testing
-      description: Testing React components with RTL
-      file: instructions/testing.md
-      tags: [react, testing, rtl]
-
-  hooks:
-    - name: pre-commit
-      description: Run ESLint and Prettier
-      file: hooks/pre-commit.sh
-      tags: [git, javascript, linting]
-
-  commands:
-    - name: test
-      description: Run Jest with coverage
-      file: commands/test.sh
-      tags: [testing, jest]
-
-  resources:
-    - name: tsconfig
-      description: TypeScript configuration for React
-      file: resources/tsconfig.json
-      install_path: tsconfig.json
-      tags: [typescript, config]
-
-    - name: eslintrc
-      description: ESLint configuration
-      file: resources/.eslintrc.json
-      install_path: .eslintrc.json
-      tags: [linting, config]
-```
-
-**Instruction example** (`instructions/components.md`):
-```markdown
-# React Component Patterns
-
-## Component Structure
-
-### Functional Components with Hooks
-
-Always use functional components:
-
-```tsx
-// Good: Functional component with proper typing
-interface UserCardProps {
-  user: User;
-  onEdit: (id: string) => void;
-}
-
-export const UserCard: React.FC<UserCardProps> = ({ user, onEdit }) => {
-  const [isEditing, setIsEditing] = useState(false);
-
-  return (
-    <div className="user-card">
-      <h2>{user.name}</h2>
-      <button onClick={() => onEdit(user.id)}>Edit</button>
-    </div>
-  );
-};
-
-// Bad: Class component (avoid)
-class UserCard extends React.Component {
-  ...
-}
-```
-
-## State Management
-
-### useState for Local State
-
-```tsx
-const [count, setCount] = useState(0);
-const [user, setUser] = useState<User | null>(null);
-```
-
-### useReducer for Complex State
-
-```tsx
-type Action =
-  | { type: 'increment' }
-  | { type: 'decrement' }
-  | { type: 'reset'; value: number };
-
-const counterReducer = (state: number, action: Action): number => {
-  switch (action.type) {
-    case 'increment': return state + 1;
-    case 'decrement': return state - 1;
-    case 'reset': return action.value;
-  }
-};
-
-const [count, dispatch] = useReducer(counterReducer, 0);
-```
-```
-
----
-
-## Web Frameworks
-
-### Example 4: FastAPI Backend
-
-FastAPI development with async patterns and testing.
-
-**Manifest** (`ai-config-kit-package.yaml`):
-```yaml
-name: fastapi-backend
-version: 1.5.0
-description: FastAPI development with async patterns and testing
-author: Backend Team
-namespace: backend/fastapi
-license: MIT
-keywords: [fastapi, python, async, api, rest]
-
-components:
-  instructions:
-    - name: api-design
-      description: RESTful API design patterns
-      file: instructions/api-design.md
-      tags: [fastapi, rest, api]
-
-    - name: async-patterns
-      description: Async/await best practices
-      file: instructions/async.md
-      tags: [fastapi, async, python]
-
-    - name: database
-      description: SQLAlchemy with async support
-      file: instructions/database.md
-      tags: [fastapi, database, sqlalchemy]
-
-  commands:
-    - name: dev
-      description: Run development server with auto-reload
-      file: commands/dev.sh
-      tags: [fastapi, development]
-
-    - name: test
-      description: Run pytest with async support
-      file: commands/test.sh
-      tags: [testing, pytest, async]
-```
-
-**Instruction example** (`instructions/api-design.md`):
-```markdown
-# FastAPI RESTful API Design
-
-## Endpoint Structure
-
-### Use Routers for Organization
-
-```python
-from fastapi import APIRouter
-
-router = APIRouter(prefix="/users", tags=["users"])
-
-@router.get("/")
-async def list_users() -> list[UserOut]:
-    """List all users."""
-    return await user_service.get_all()
-
-@router.get("/{user_id}")
-async def get_user(user_id: str) -> UserOut:
-    """Get user by ID."""
-    return await user_service.get_by_id(user_id)
-
-@router.post("/")
-async def create_user(user: UserCreate) -> UserOut:
-    """Create new user."""
-    return await user_service.create(user)
-```
-
-## Request/Response Models
-
-### Use Pydantic Models
-
-```python
-from pydantic import BaseModel, EmailStr
-
-class UserBase(BaseModel):
-    email: EmailStr
-    name: str
-
-class UserCreate(UserBase):
-    password: str
-
-class UserOut(UserBase):
-    id: str
-    created_at: datetime
-
-    class Config:
-        from_attributes = True
-```
-```
-
----
-
-## Testing & Quality
-
-### Example 5: Testing Toolkit
-
-Comprehensive testing setup for Python projects.
-
-**Manifest** (`ai-config-kit-package.yaml`):
-```yaml
-name: python-testing-toolkit
-version: 1.0.0
-description: Complete testing setup with pytest, coverage, and fixtures
-author: QA Team
-namespace: testing/python
-license: MIT
-keywords: [testing, pytest, coverage, tdd]
-
-components:
-  instructions:
-    - name: tdd-practices
-      description: Test-driven development workflow
-      file: instructions/tdd.md
-      tags: [testing, tdd]
-
-    - name: pytest-patterns
-      description: Pytest patterns and fixtures
-      file: instructions/pytest.md
-      tags: [testing, pytest]
-
-    - name: mocking
-      description: Mocking and patching strategies
-      file: instructions/mocking.md
-      tags: [testing, mocking]
-
-  commands:
-    - name: test
-      description: Run tests with coverage
-      file: commands/test.sh
-      tags: [testing]
-
-    - name: test-watch
-      description: Run tests in watch mode
-      file: commands/test-watch.sh
-      tags: [testing, development]
-
-  resources:
-    - name: pytest-ini
-      description: Pytest configuration
-      file: resources/pytest.ini
-      install_path: pytest.ini
-      tags: [testing, config]
-
-    - name: conftest
-      description: Shared pytest fixtures
-      file: resources/conftest.py
-      install_path: tests/conftest.py
-      tags: [testing, fixtures]
-```
-
-**Instruction example** (`instructions/tdd.md`):
-```markdown
-# Test-Driven Development Practices
-
-## TDD Workflow
-
-### Red-Green-Refactor Cycle
-
-1. **Red**: Write a failing test
-2. **Green**: Write minimal code to pass
-3. **Refactor**: Improve code while keeping tests green
-
-### Example Workflow
-
-```python
-# Step 1: Red - Write failing test
-def test_calculate_total_with_tax():
-    cart = ShoppingCart()
-    cart.add_item(Item(price=100))
-    assert cart.calculate_total_with_tax(tax_rate=0.1) == 110
-
-# Step 2: Green - Minimal implementation
-class ShoppingCart:
-    def __init__(self):
-        self.items = []
-
-    def add_item(self, item):
-        self.items.append(item)
-
-    def calculate_total_with_tax(self, tax_rate):
-        subtotal = sum(item.price for item in self.items)
-        return subtotal * (1 + tax_rate)
-
-# Step 3: Refactor - Improve implementation
-class ShoppingCart:
-    def __init__(self):
-        self.items: list[Item] = []
-
-    def add_item(self, item: Item) -> None:
-        self.items.append(item)
-
-    def get_subtotal(self) -> float:
-        return sum(item.price for item in self.items)
-
-    def calculate_total_with_tax(self, tax_rate: float) -> float:
-        return self.get_subtotal() * (1 + tax_rate)
-```
-
-## Test Organization
-
-### Arrange-Act-Assert Pattern
-
-```python
-def test_user_registration():
-    # Arrange: Set up test data
-    user_data = {
-        "email": "test@example.com",
-        "password": "secure123",
-    }
-
-    # Act: Execute the code under test
-    user = User.create(user_data)
-
-    # Assert: Verify the results
-    assert user.email == "test@example.com"
-    assert user.password_hash is not None
-    assert user.is_active is True
-```
-```
-
----
-
-## DevOps & Deployment
-
-### Example 6: Docker Development
-
-Docker configuration package for development and deployment.
-
-**Manifest** (`ai-config-kit-package.yaml`):
-```yaml
-name: docker-development
+name: fullstack-team
 version: 2.0.0
-description: Docker development environment with best practices
-author: DevOps Team
-namespace: devops/docker
+description: Full-stack development environment with API, React, and database patterns
+author: Engineering
 license: MIT
-keywords: [docker, deployment, devops, containers]
+namespace: acme/fullstack
 
 components:
   instructions:
-    - name: dockerfile-best-practices
-      description: Writing efficient Dockerfiles
-      file: instructions/dockerfile.md
-      tags: [docker, deployment]
-
-    - name: docker-compose
-      description: Docker Compose for local development
-      file: instructions/compose.md
-      tags: [docker, development]
-
-  commands:
-    - name: build
-      description: Build Docker images
-      file: commands/build.sh
-      tags: [docker, build]
-
-    - name: up
-      description: Start development environment
-      file: commands/up.sh
-      tags: [docker, development]
-
-  resources:
-    - name: dockerfile
-      description: Production-ready Dockerfile
-      file: resources/Dockerfile
-      install_path: Dockerfile
-      tags: [docker]
-
-    - name: docker-compose
-      description: Development docker-compose configuration
-      file: resources/docker-compose.yml
-      install_path: docker-compose.yml
-      tags: [docker, development]
-
-    - name: dockerignore
-      description: Docker ignore patterns
-      file: resources/.dockerignore
-      install_path: .dockerignore
-      tags: [docker]
-```
-
-**Resource example** (`resources/Dockerfile`):
-```dockerfile
-# Multi-stage Dockerfile for Python applications
-
-# Build stage
-FROM python:3.12-slim as builder
-
-WORKDIR /app
-
-# Install build dependencies
-RUN apt-get update && apt-get install -y \
-    build-essential \
-    && rm -rf /var/lib/apt/lists/*
-
-# Copy requirements and install dependencies
-COPY requirements.txt .
-RUN pip install --user --no-cache-dir -r requirements.txt
-
-# Runtime stage
-FROM python:3.12-slim
-
-WORKDIR /app
-
-# Copy Python dependencies from builder
-COPY --from=builder /root/.local /root/.local
-
-# Copy application code
-COPY . .
-
-# Make sure scripts are executable
-ENV PATH=/root/.local/bin:$PATH
-
-# Run as non-root user
-RUN useradd -m appuser && chown -R appuser /app
-USER appuser
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD python -c "import requests; requests.get('http://localhost:8000/health')"
-
-# Expose port
-EXPOSE 8000
-
-# Run application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
-```
-
----
-
-## Multi-Language Packages
-
-### Example 7: Full-Stack Development
-
-Package combining frontend and backend best practices.
-
-**Manifest** (`ai-config-kit-package.yaml`):
-```yaml
-name: fullstack-development
-version: 1.0.0
-description: Full-stack development with React, FastAPI, and PostgreSQL
-author: Full Stack Team
-namespace: fullstack/web
-license: MIT
-keywords: [fullstack, react, fastapi, postgresql]
-
-components:
-  instructions:
-    # Frontend
-    - name: react-components
-      description: React component patterns
-      file: instructions/frontend/components.md
-      tags: [react, frontend]
-
-    - name: state-management
-      description: State management with React hooks
-      file: instructions/frontend/state.md
-      tags: [react, state, frontend]
-
-    # Backend
     - name: api-design
-      description: RESTful API design
-      file: instructions/backend/api.md
-      tags: [fastapi, api, backend]
+      file: instructions/api-design.md
+      description: RESTful API design patterns and conventions
+      tags: [api, rest, backend]
+
+    - name: react-components
+      file: instructions/react-components.md
+      description: React component patterns with TypeScript
+      tags: [react, typescript, frontend]
 
     - name: database-patterns
-      description: Database design and migrations
-      file: instructions/backend/database.md
-      tags: [postgresql, database, backend]
+      file: instructions/database-patterns.md
+      description: Database schema design and query optimization
+      tags: [database, sql, backend]
 
-    # DevOps
-    - name: deployment
-      description: Deployment workflow
-      file: instructions/devops/deployment.md
-      tags: [devops, deployment]
+    - name: code-review
+      file: instructions/code-review.md
+      description: Code review checklist and standards
+      tags: [review, quality, process]
+
+  mcp_servers:
+    - name: filesystem
+      file: mcp/filesystem.json
+      description: Project filesystem access
+      credentials:
+        - name: ALLOWED_DIRECTORIES
+          description: Directories to expose to the AI
+          required: false
+          default: "."
+
+    - name: github
+      file: mcp/github.json
+      description: GitHub API access for PRs and issues
+      credentials:
+        - name: GITHUB_TOKEN
+          description: GitHub personal access token with repo scope
+          required: true
+          example: "ghp_xxxxxxxxxxxxxxxxxxxx"
+
+  hooks:
+    - name: pre-commit
+      file: hooks/pre-commit.sh
+      description: Run ESLint, Prettier, and backend linting
+      hook_type: pre-commit
 
   commands:
-    - name: dev-frontend
-      description: Start frontend development server
-      file: commands/dev-frontend.sh
-      tags: [frontend, development]
-
-    - name: dev-backend
-      description: Start backend development server
-      file: commands/dev-backend.sh
-      tags: [backend, development]
-
     - name: test-all
-      description: Run all tests (frontend + backend)
       file: commands/test-all.sh
-      tags: [testing]
+      description: Run frontend and backend test suites
+      command_type: shell
+
+    - name: dev
+      file: commands/dev.sh
+      description: Start development servers (frontend + backend)
+      command_type: shell
 
   resources:
-    - name: docker-compose
-      description: Full development environment
-      file: resources/docker-compose.yml
-      install_path: docker-compose.yml
-      tags: [docker, development]
+    - name: editorconfig
+      file: resources/.editorconfig
+      description: Editor configuration for consistent formatting
+      install_path: .editorconfig
+      checksum: sha256:d4e5f6a7b8c9...
+      size: 280
+
+    - name: prettierrc
+      file: resources/.prettierrc
+      description: Prettier configuration for frontend code
+      install_path: .prettierrc
+      checksum: sha256:e5f6a7b8c9d0...
+      size: 120
 ```
 
-**Command example** (`commands/test-all.sh`):
+### Key Files
+
+**`mcp/github.json`**
+
+```json
+{
+  "mcpServers": {
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}"
+      }
+    }
+  }
+}
+```
+
+**`commands/test-all.sh`**
+
 ```bash
 #!/usr/bin/env bash
-# Run all tests (frontend + backend)
-
 set -e
 
-echo "Running full test suite..."
-
-# Backend tests
-echo ""
 echo "=== Backend Tests ==="
 cd backend
-pytest --cov=. --cov-report=html --cov-report=term
+if command -v pytest &> /dev/null; then
+    pytest --cov=. --cov-report=term -q
+else
+    echo "pytest not found, skipping backend tests"
+fi
 cd ..
 
-# Frontend tests
 echo ""
 echo "=== Frontend Tests ==="
 cd frontend
-npm test -- --coverage
+if [ -f package.json ]; then
+    npm test -- --coverage --watchAll=false
+else
+    echo "No package.json found, skipping frontend tests"
+fi
 cd ..
 
 echo ""
-echo "✓ All tests passed!"
-echo "Backend coverage: backend/htmlcov/index.html"
-echo "Frontend coverage: frontend/coverage/index.html"
+echo "All test suites complete."
+```
+
+### Installation
+
+```bash
+# Claude Code: gets all 11 components
+devsync package install ./fullstack-team --ide claude
+
+# Cursor: gets 4 instructions + 2 MCP servers + 2 resources = 8 components
+devsync package install ./fullstack-team --ide cursor
+
+# Copilot: gets 4 instructions + 2 MCP servers = 6 components
+devsync package install ./fullstack-team --ide copilot
 ```
 
 ---
 
-## Usage Tips
+## 4. Claude Code Power User
 
-### Installing Multiple Related Packages
+A Claude-specific package that uses skills, memory files, commands, and hooks to build a highly customized Claude Code environment.
 
-```bash
-# Install base package first
-aiconfig package install ./python-best-practices --ide claude
-
-# Then add framework-specific package
-aiconfig package install ./django-development --ide claude
-```
-
-### Customizing After Installation
-
-After installing a package, you can customize installed files:
-
-```bash
-# Install package
-aiconfig package install ./python-best-practices --ide claude
-
-# Customize instruction
-vim .claude/rules/style-guide.md
-
-# Note: Reinstalling with --conflict skip will preserve your changes
-aiconfig package install ./python-best-practices --ide claude --conflict skip
-```
-
-### Creating Variants
-
-Create multiple variants of a package:
+### Directory Structure
 
 ```
-my-packages/
-├── python-minimal/       # Basic instructions only
-├── python-standard/      # Instructions + hooks
-└── python-complete/      # Everything
+claude-power-user/
+├── ai-config-kit-package.yaml
+├── skills/
+│   ├── review-pr/
+│   │   └── SKILL.md
+│   └── create-test/
+│       └── SKILL.md
+├── memory_files/
+│   ├── CLAUDE.md
+│   └── src/
+│       └── api/
+│           └── CLAUDE.md
+├── commands/
+│   ├── deploy.sh
+│   └── db-migrate.sh
+└── hooks/
+    ├── pre-commit.sh
+    └── notification.sh
 ```
 
-Users choose which variant to install:
-```bash
-aiconfig package install ./my-packages/python-standard --ide claude
+### Manifest
+
+```yaml
+name: claude-power-user
+version: 1.0.0
+description: Advanced Claude Code setup with skills, memory files, and automation
+author: Senior Dev
+license: MIT
+namespace: personal/claude-config
+
+components:
+  skills:
+    - name: review-pr
+      file: skills/review-pr
+      description: Automated PR review with security and performance checks
+
+    - name: create-test
+      file: skills/create-test
+      description: Generate unit tests for a given function or module
+
+  memory_files:
+    - name: project-context
+      file: memory_files/CLAUDE.md
+      description: Project architecture, conventions, and active decisions
+
+    - name: api-context
+      file: memory_files/src/api/CLAUDE.md
+      description: API layer patterns and endpoint conventions
+
+  commands:
+    - name: deploy
+      file: commands/deploy.sh
+      description: Deploy to staging or production
+      command_type: shell
+
+    - name: db-migrate
+      file: commands/db-migrate.sh
+      description: Run database migrations with safety checks
+      command_type: shell
+
+  hooks:
+    - name: pre-commit
+      file: hooks/pre-commit.sh
+      description: Comprehensive pre-commit checks
+      hook_type: pre-commit
+
+    - name: notification
+      file: hooks/notification.sh
+      description: Send Slack notification on task completion
+      hook_type: post-task
 ```
 
+### Key Files
+
+**`skills/review-pr/SKILL.md`**
+
+```markdown
+---
+name: review-pr
+description: Review a pull request for correctness, security, and performance
 ---
 
-## Related Documentation
+# PR Review Skill
 
-- **[Getting Started](getting-started.md)** - Quick start guide
-- **[Creating Packages](creating-packages.md)** - Build your own packages
-- **[Manifest Reference](manifest-reference.md)** - Complete YAML schema
-- **[CLI Reference](cli-reference.md)** - All commands and options
+Review the specified pull request thoroughly.
 
+## Process
+
+1. Fetch the PR diff using the GitHub CLI
+2. Check each changed file for:
+   - Correctness: logic errors, edge cases, null handling
+   - Security: injection risks, auth bypasses, hardcoded secrets
+   - Performance: N+1 queries, unnecessary allocations, missing indexes
+   - Style: naming conventions, code organization, documentation
+3. Identify any missing test coverage for changed code
+4. Generate a structured review comment with findings organized by severity
+
+## Output Format
+
+Produce a review with sections:
+- **Critical** -- must fix before merge
+- **Suggestions** -- improvements to consider
+- **Positive** -- things done well
+```
+
+**`skills/create-test/SKILL.md`**
+
+```markdown
+---
+name: create-test
+description: Generate comprehensive unit tests for a function or module
 ---
 
-**Want to contribute your package?** Share it on [GitHub Discussions](https://github.com/troylar/devsync/discussions) or submit a PR to add it to the examples!
+# Create Test Skill
+
+Generate unit tests for the specified function, class, or module.
+
+## Process
+
+1. Read the source file and understand the function signature and behavior
+2. Identify edge cases: empty inputs, boundary values, error conditions
+3. Generate tests using the project's test framework (pytest by default)
+4. Follow the Arrange-Act-Assert pattern
+5. Use fixtures and parametrize for related test cases
+6. Include both success and failure scenarios
+
+## Requirements
+
+- Tests must be independent and not rely on execution order
+- Mock external dependencies (database, network, filesystem)
+- Assert specific values, not just truthiness
+- Name tests descriptively: test_<function>_<scenario>_<expected>
+```
+
+**`memory_files/CLAUDE.md`**
+
+```markdown
+# Project Context
+
+## Architecture
+
+Monorepo with three services:
+- `src/api/` -- FastAPI HTTP service (port 8000)
+- `src/worker/` -- Celery task workers
+- `src/shared/` -- Shared models and utilities
+
+## Key Decisions
+
+- SQLAlchemy 2.0 with async sessions
+- Pydantic v2 for validation
+- pytest with factory_boy for test data
+- Alembic for migrations (always review generated SQL)
+
+## Development Flow
+
+1. Create feature branch from main
+2. Write tests first (TDD)
+3. Implement the feature
+4. Run `invoke quality` before committing
+5. Open PR and request review
+```
+
+**`memory_files/src/api/CLAUDE.md`**
+
+```markdown
+# API Layer Context
+
+## Route Organization
+
+Routes are organized by resource in `src/api/routes/`:
+- `users.py` -- user CRUD and authentication
+- `projects.py` -- project management
+- `tasks.py` -- task operations
+
+## Patterns
+
+- All endpoints use dependency injection for database sessions
+- Authentication via `get_current_user` dependency
+- Response models are separate from database models
+- Use `status_code` parameter on route decorators, not manual responses
+```
+
+### Installation
+
+```bash
+# Only Claude Code supports all these component types
+devsync package install ./claude-power-user --ide claude
+```
+
+For other IDEs, only the supported components are installed. Since this package has no instructions or resources, installing to Cursor or Windsurf results in no components installed.
+
+!!! tip "Mixed packages"
+    If you want a package that works across IDEs, include instructions alongside Claude-specific components. Other IDEs will install the instructions and skip the rest.

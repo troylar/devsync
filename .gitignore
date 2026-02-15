@@ -95,5 +95,8 @@ test-local-repo/
 *.whl
 instructionkit.egg-info/
 
+# MkDocs build output
+site/
+
 # Specify framework (if not part of project)
 .specify/

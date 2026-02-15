@@ -1,206 +1,173 @@
 # Configuration Packages
 
-**A comprehensive guide to DevSync's package management system**
+## What Are Packages?
 
-## Overview
+A configuration package is a directory containing multiple related components that configure AI coding assistants as a unit. Instead of installing instructions, MCP servers, hooks, and commands individually, a package bundles them together with a manifest that declares what is included and how components relate to each other.
 
-Configuration packages are the easiest way to bundle and share AI coding assistant configurations. Instead of manually managing individual instructions, MCP servers, hooks, and commands, packages let you install complete development environments with a single command.
+A package can contain any combination of these component types:
 
-### What Are Configuration Packages?
+| Component Type | Description |
+|----------------|-------------|
+| **Instructions** | Markdown guidelines that shape AI behavior |
+| **MCP Servers** | Model Context Protocol server configurations |
+| **Hooks** | Scripts triggered by IDE lifecycle events |
+| **Commands** | Reusable slash commands and shell scripts |
+| **Skills** | Claude Code skill directories (SKILL.md format) |
+| **Workflows** | Windsurf multi-step automated processes |
+| **Memory Files** | CLAUDE.md persistent context files |
+| **Resources** | Configuration files, templates, .gitignore, etc. |
 
-A configuration package is a collection of related components that work together to enhance your AI coding assistant. Think of it like a software package manager (npm, pip, brew), but for AI assistant configurations.
+## Why Packages Instead of Individual Instructions?
 
-**A package can contain:**
+Individual instructions work well for standalone guidelines. Packages solve a different problem: coordinating multiple components that work together.
 
-- **Instructions**: Guidelines and rules for how the AI should behave
-- **MCP Servers**: Model Context Protocol servers for extended capabilities
-- **Hooks**: Scripts that run automatically at specific points (pre-commit, etc.)
-- **Commands**: Reusable scripts you can invoke on demand
-- **Resources**: Configuration files, templates, and other assets
-
-### Why Use Packages?
-
-**Before Packages:**
-```bash
-# Manual installation - tedious and error-prone
-aiconfig install python-style-guide
-aiconfig mcp install filesystem
-# Manually create hooks...
-# Manually configure commands...
-# Hope everything works together...
-```
-
-**With Packages:**
-```bash
-# One command installs everything
-aiconfig package install python-dev-setup --ide claude
-
-# ✓ 5 instructions installed
-# ✓ 2 MCP servers configured
-# ✓ 3 hooks activated
-# ✓ 4 commands ready
-# ✓ All components working together
-```
-
-### Key Benefits
-
-#### 🎯 **Consistency**
-Packages ensure everyone on your team uses the same AI assistant configuration. No more "works on my machine" problems.
-
-#### 🚀 **Speed**
-Install complete development environments in seconds. Get new team members productive immediately.
-
-#### 🔄 **Reusability**
-Create a package once, use it across all your projects. Share packages with the community.
-
-#### 🛡️ **Safety**
-Packages are versioned and tracked. You can always see what's installed and roll back if needed.
-
-#### 🎨 **Flexibility**
-Packages automatically adapt to your IDE (Claude Code, Cursor, Windsurf, or GitHub Copilot), installing only compatible components.
-
-## Quick Example
-
-Here's a complete package that sets up Python development best practices:
-
-```yaml
-# ai-config-kit-package.yaml
-name: python-dev-setup
-version: 1.0.0
-description: Complete Python development configuration
-author: Your Team
-namespace: your-org/packages
-
-components:
-  instructions:
-    - name: python-style
-      file: instructions/python-style.md
-      description: PEP 8 style guidelines
-
-  hooks:
-    - name: pre-commit
-      file: hooks/pre-commit.sh
-      description: Run linting before commits
-
-  commands:
-    - name: test
-      file: commands/test.sh
-      description: Run test suite with coverage
-```
-
-Install it:
+**Without packages:**
 
 ```bash
-aiconfig package install python-dev-setup --ide claude
+# Install instructions one at a time
+devsync install python-style-guide
+devsync install testing-strategy
+
+# Manually configure MCP servers
+# Manually create hooks
+# Manually set up commands
+# Hope the pieces work together
 ```
 
-That's it! Your AI assistant now:
-- Follows Python style guidelines
-- Runs linting before every commit
-- Has a test command ready to use
+**With packages:**
 
-## How It Works
+```bash
+devsync package install ./python-dev-setup --ide claude
+```
 
-### 1. Package Structure
+One command installs all components, translates them to the correct IDE format, and tracks everything for later management.
 
-Packages live in a directory with this structure:
+Packages provide:
+
+- **Atomicity** -- install or uninstall an entire configuration as one unit
+- **IDE adaptation** -- components are automatically filtered and translated per IDE
+- **Tracking** -- installed packages are recorded in `.devsync/packages.json`
+- **Conflict handling** -- skip, overwrite, or rename files that already exist
+- **Reproducibility** -- share a package directory and anyone gets the same setup
+
+## Installation Workflow
+
+When you run `devsync package install`, the system executes these steps in order:
+
+```
+1. Parse Manifest
+   Read ai-config-kit-package.yaml, validate required fields,
+   resolve component file references
+
+2. Check Existing Installation
+   Query .devsync/packages.json to determine if this package
+   is already installed (enables reinstall detection)
+
+3. Filter by IDE Capability
+   Remove components the target IDE does not support
+   (e.g., hooks are skipped for Cursor)
+
+4. Translate Components
+   Convert each component to the IDE-specific format
+   (file extension, directory path, content structure)
+
+5. Install Files
+   Write files to the project, applying the chosen
+   conflict resolution strategy (skip/overwrite/rename)
+
+6. Track Installation
+   Record the package name, version, component paths,
+   checksums, and timestamps in .devsync/packages.json
+```
+
+## IDE Compatibility
+
+Different AI coding tools support different component types. When installing a package, DevSync automatically skips components that the target IDE cannot use.
+
+| Component | Claude Code | Cursor | Windsurf | Copilot | Kiro | Cline | Roo Code | Codex CLI |
+|-----------|:-----------:|:------:|:--------:|:-------:|:----:|:-----:|:--------:|:---------:|
+| Instructions | Y | Y | Y | Y | Y | Y | Y | Y |
+| MCP Servers | Y | Y | Y | Y | -- | -- | Y | -- |
+| Hooks | Y | -- | -- | -- | -- | -- | -- | -- |
+| Commands | Y | -- | -- | -- | -- | -- | Y | -- |
+| Skills | Y | -- | -- | -- | -- | -- | -- | -- |
+| Workflows | -- | -- | Y | -- | -- | -- | -- | -- |
+| Memory Files | Y | -- | -- | -- | -- | -- | -- | -- |
+| Resources | Y | Y | Y | -- | Y | Y | Y | Y |
+
+!!! info "Additional IDEs"
+    DevSync also supports Gemini CLI, Antigravity, Amazon Q, JetBrains AI, Junie, Zed, Continue.dev, Aider, Trae, Augment, Tabnine, OpenHands, Amp, and OpenCode. All support instructions and resources. MCP support varies -- check `devsync/ai_tools/capability_registry.py` for the full matrix.
+
+### Translation Paths
+
+Components are installed to IDE-specific locations:
+
+=== "Claude Code"
+
+    ```
+    Instructions  -> .claude/rules/*.md
+    MCP Servers   -> .claude/settings.local.json
+    Hooks         -> .claude/hooks/*.sh
+    Commands      -> .claude/commands/*.sh
+    Skills        -> .claude/skills/<name>/SKILL.md
+    Memory Files  -> CLAUDE.md (project root or subdirectories)
+    Resources     -> specified install_path
+    ```
+
+=== "Cursor"
+
+    ```
+    Instructions  -> .cursor/rules/*.mdc
+    MCP Servers   -> .cursor/mcp.json
+    Resources     -> specified install_path
+    ```
+
+=== "Windsurf"
+
+    ```
+    Instructions  -> .windsurf/rules/*.md
+    MCP Servers   -> ~/.codeium/windsurf/mcp_config.json
+    Workflows     -> .windsurf/workflows/*.md
+    Resources     -> specified install_path
+    ```
+
+=== "GitHub Copilot"
+
+    ```
+    Instructions  -> .github/instructions/*.instructions.md
+    MCP Servers   -> .vscode/mcp.json
+    ```
+
+=== "Roo Code"
+
+    ```
+    Instructions  -> .roo/rules/*.md
+    MCP Servers   -> .roo/mcp.json
+    Commands      -> .roo/commands/*.md
+    Resources     -> specified install_path
+    ```
+
+## Package Structure
+
+Every package is a directory with an `ai-config-kit-package.yaml` manifest and one or more component directories:
 
 ```
 my-package/
-├── ai-config-kit-package.yaml    # Package manifest
-├── instructions/                  # Instruction files
-│   └── style-guide.md
-├── mcp/                          # MCP server configs
-│   └── filesystem.json
-├── hooks/                        # Hook scripts
-│   └── pre-commit.sh
-├── commands/                     # Command scripts
-│   └── test.sh
-└── resources/                    # Additional files
-    └── .gitignore
+├── ai-config-kit-package.yaml    # Required manifest
+├── README.md                     # Recommended documentation
+├── instructions/                 # Instruction .md files
+├── mcp/                          # MCP server .json configs
+├── hooks/                        # Hook shell scripts
+├── commands/                     # Command shell scripts
+├── skills/                       # Skill directories (SKILL.md)
+├── workflows/                    # Workflow files
+├── memory_files/                 # CLAUDE.md files
+└── resources/                    # Any additional files
 ```
 
-### 2. Installation Process
+## Next Steps
 
-When you install a package:
-
-```bash
-aiconfig package install ./my-package --ide claude
-```
-
-DevSync:
-
-1. **Parses** the manifest to understand what's in the package
-2. **Filters** components based on your IDE's capabilities
-3. **Translates** components to IDE-specific formats
-4. **Installs** files to the correct locations
-5. **Tracks** the installation in `.ai-config-kit/packages.json`
-
-### 3. IDE Compatibility
-
-Different IDEs support different component types:
-
-| Component     | Claude Code | Cursor | Windsurf | GitHub Copilot |
-|---------------|-------------|--------|----------|----------------|
-| Instructions  | ✓           | ✓      | ✓        | ✓              |
-| MCP Servers   | ✓           | ✗      | ✗        | ✗              |
-| Hooks         | ✓           | ✗      | ✗        | ✗              |
-| Commands      | ✓           | ✗      | ✗        | ✗              |
-| Resources     | ✓           | ✓      | ✓        | ✗              |
-
-Packages automatically skip unsupported components for your IDE.
-
-### 4. Translation Layer
-
-Components are translated to IDE-specific formats:
-
-**Claude Code:**
-- Instructions → `.claude/rules/*.md`
-- Hooks → `.claude/hooks/*.sh`
-- Commands → `.claude/commands/*.sh`
-
-**Cursor:**
-- Instructions → `.cursor/rules/*.mdc` (Cursor-specific format)
-
-**Windsurf:**
-- Instructions → `.windsurf/rules/*.md`
-
-**GitHub Copilot:**
-- Instructions → `.github/instructions/*.md`
-
-## Documentation Navigation
-
-This documentation is organized into focused guides:
-
-### 📖 Core Guides
-
-1. **[Getting Started](getting-started.md)** - Install your first package in 5 minutes
-2. **[Installing Packages](installation.md)** - Complete installation guide with all options
-3. **[Creating Packages](creating-packages.md)** - Build your own packages from scratch
-
-### 📚 Reference
-
-4. **[Manifest Reference](manifest-reference.md)** - Complete YAML schema documentation
-5. **[CLI Reference](cli-reference.md)** - All commands and options
-6. **[Examples](examples.md)** - Real-world package examples
-
-### 🔧 Help
-
-7. **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
-
-## What's Next?
-
-- **New to packages?** Start with the [Getting Started](getting-started.md) guide
-- **Installing a package?** See the [Installation Guide](installation.md)
-- **Creating a package?** Follow the [Package Creation Guide](creating-packages.md)
-- **Need reference docs?** Check the [Manifest Reference](manifest-reference.md) or [CLI Reference](cli-reference.md)
-
-## Community & Support
-
-- **Examples**: Browse the `example-package/` directory in this repo
-- **Issues**: Report bugs or request features on [GitHub Issues](https://github.com/troylar/devsync/issues)
-- **Discussions**: Ask questions in [GitHub Discussions](https://github.com/troylar/devsync/discussions)
-
----
-
-**Ready to get started?** Head to the [Getting Started Guide](getting-started.md) →
+- [Creating Packages](creating.md) -- build your own package from scratch or from an existing project
+- [Component Types](components.md) -- detailed reference for each component type
+- [Installing Packages](installing.md) -- install, list, and uninstall packages
+- [Examples](examples.md) -- complete real-world package examples

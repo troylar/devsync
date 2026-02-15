@@ -1,0 +1,122 @@
+site_name: DevSync
+site_url: https://devsync.readthedocs.io
+site_description: AI-powered dev config management for teams
+repo_url: https://github.com/troylar/devsync
+repo_name: troylar/devsync
+edit_uri: edit/main/docs/
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: deep purple
+      accent: amber
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.instant
+    - navigation.instant.prefetch
+    - navigation.top
+    - navigation.indexes
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.snippets
+  - attr_list
+  - md_in_html
+  - def_list
+  - tables
+  - toc:
+      permalink: true
+
+plugins:
+  - search
+  - minify:
+      minify_html: true
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/troylar/devsync
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/devsync/
+
+extra_css:
+  - assets/stylesheets/extra.css
+
+nav:
+  - Home: index.md
+  - Getting Started:
+    - getting-started/installation.md
+    - getting-started/quickstart.md
+    - getting-started/concepts.md
+  - CLI:
+    - cli/index.md
+    - cli/download.md
+    - cli/install.md
+    - cli/list.md
+    - cli/update.md
+    - cli/delete.md
+    - cli/uninstall.md
+    - cli/tools.md
+    - cli/package.md
+  - IDE Integrations:
+    - ide-integrations/index.md
+    - ide-integrations/claude-code.md
+    - ide-integrations/cursor.md
+    - ide-integrations/windsurf.md
+    - ide-integrations/copilot.md
+    - ide-integrations/codex.md
+    - ide-integrations/other-ides.md
+  - Packages:
+    - packages/index.md
+    - packages/creating.md
+    - packages/components.md
+    - packages/installing.md
+    - packages/examples.md
+  - MCP Server:
+    - mcp-server/index.md
+    - mcp-server/installation.md
+    - mcp-server/tools-reference.md
+    - mcp-server/team-profiles.md
+    - mcp-server/ai-merge-flow.md
+    - mcp-server/backups-and-recovery.md
+    - mcp-server/ide-setup.md
+  - Tutorials:
+    - tutorials/team-config-repo.md
+    - tutorials/onboard-new-developer.md
+    - tutorials/ai-merge-workflow.md
+    - tutorials/custom-packages.md
+  - Advanced:
+    - advanced/config-types.md
+    - advanced/conflict-resolution.md
+    - advanced/project-root-detection.md
+    - advanced/contributing.md
+  - Reference:
+    - reference/cli-reference.md
+    - reference/yaml-schemas.md
+    - reference/changelog.md

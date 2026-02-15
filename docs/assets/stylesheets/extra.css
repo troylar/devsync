@@ -1,0 +1,54 @@
+/* DevSync custom styles */
+
+/* Slightly tighter table spacing */
+.md-typeset table:not([class]) td,
+.md-typeset table:not([class]) th {
+  padding: 0.6em 0.8em;
+}
+
+/* Hero section on landing page */
+.hero {
+  text-align: center;
+  padding: 2rem 0;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.hero .subtitle {
+  font-size: 1.2rem;
+  opacity: 0.8;
+  margin-bottom: 1.5rem;
+}
+
+/* Feature grid for landing page */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 2rem 0;
+}
+
+.feature-card {
+  padding: 1.5rem;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 0.4rem;
+}
+
+.feature-card h3 {
+  margin-top: 0;
+}
+
+/* IDE badge styling */
+.ide-badge {
+  display: inline-block;
+  padding: 0.2em 0.6em;
+  border-radius: 0.3em;
+  font-size: 0.8em;
+  font-weight: 600;
+  background: var(--md-primary-fg-color--light);
+  color: var(--md-primary-bg-color);
+  margin: 0.1em;
+}
