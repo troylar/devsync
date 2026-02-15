@@ -250,6 +250,217 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
             "MCP servers configured via .mcp.json at project root."
         ),
     ),
+    AIToolType.AMAZONQ: IDECapability(
+        tool_type=AIToolType.AMAZONQ,
+        tool_name="Amazon Q",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".amazonq/rules/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".amazonq/mcp.json",
+        notes=(
+            "Amazon Q Developer uses .md files in .amazonq/rules/. " "MCP servers configured via .amazonq/mcp.json."
+        ),
+    ),
+    AIToolType.JETBRAINS: IDECapability(
+        tool_type=AIToolType.JETBRAINS,
+        tool_name="JetBrains AI",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".aiassistant/rules/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".aiassistant/mcp.json",
+        notes=(
+            "JetBrains AI Assistant uses .md files in .aiassistant/rules/. "
+            "MCP servers configured via .aiassistant/mcp.json."
+        ),
+    ),
+    AIToolType.JUNIE: IDECapability(
+        tool_type=AIToolType.JUNIE,
+        tool_name="Junie",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".junie/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=None,
+        notes=(
+            "JetBrains Junie uses a single .junie/guidelines.md file at the project level. "
+            "DevSync manages sections within this file using HTML comment markers."
+        ),
+    ),
+    AIToolType.ZED: IDECapability(
+        tool_type=AIToolType.ZED,
+        tool_name="Zed",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".zed/settings.json",
+        notes=(
+            "Zed uses a single .rules file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers. "
+            "MCP servers configured via .zed/settings.json."
+        ),
+    ),
+    AIToolType.CONTINUE: IDECapability(
+        tool_type=AIToolType.CONTINUE,
+        tool_name="Continue.dev",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".continue/rules/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".continue/config.json",
+        notes=("Continue.dev uses .md files in .continue/rules/. " "MCP servers configured via .continue/config.json."),
+    ),
+    AIToolType.AIDER: IDECapability(
+        tool_type=AIToolType.AIDER,
+        tool_name="Aider",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=None,
+        notes=(
+            "Aider uses a single CONVENTIONS.md file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers."
+        ),
+    ),
+    AIToolType.TRAE: IDECapability(
+        tool_type=AIToolType.TRAE,
+        tool_name="Trae",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".trae/rules/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".mcp.json",
+        notes=("Trae uses .md files in .trae/rules/. " "MCP servers configured via .mcp.json at project root."),
+    ),
+    AIToolType.AUGMENT: IDECapability(
+        tool_type=AIToolType.AUGMENT,
+        tool_name="Augment",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".augment/rules/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".augment/mcp.json",
+        notes=("Augment uses .md files in .augment/rules/. " "MCP servers configured via .augment/mcp.json."),
+    ),
+    AIToolType.TABNINE: IDECapability(
+        tool_type=AIToolType.TABNINE,
+        tool_name="Tabnine",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".tabnine/guidelines/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".tabnine/mcp.json",
+        notes=("Tabnine uses .md files in .tabnine/guidelines/. " "MCP servers configured via .tabnine/mcp.json."),
+    ),
+    AIToolType.OPENHANDS: IDECapability(
+        tool_type=AIToolType.OPENHANDS,
+        tool_name="OpenHands",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.MCP_SERVER,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory=".openhands/microagents/",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=".openhands/mcp.json",
+        notes=(
+            "OpenHands uses .md files in .openhands/microagents/. " "MCP servers configured via .openhands/mcp.json."
+        ),
+    ),
+    AIToolType.AMP: IDECapability(
+        tool_type=AIToolType.AMP,
+        tool_name="Amp",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=None,
+        notes=(
+            "Amp uses a single AGENTS.md file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers."
+        ),
+    ),
+    AIToolType.OPENCODE: IDECapability(
+        tool_type=AIToolType.OPENCODE,
+        tool_name="OpenCode",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=None,
+        notes=(
+            "OpenCode uses a single AGENTS.md file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers."
+        ),
+    ),
     AIToolType.COPILOT: IDECapability(
         tool_type=AIToolType.COPILOT,
         tool_name="GitHub Copilot",

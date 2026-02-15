@@ -2,17 +2,29 @@
 
 from typing import Optional
 
+from devsync.ai_tools.aider import AiderTool
+from devsync.ai_tools.amazonq import AmazonQTool
+from devsync.ai_tools.amp import AmpTool
 from devsync.ai_tools.antigravity import AntigravityTool
+from devsync.ai_tools.augment import AugmentTool
 from devsync.ai_tools.base import AITool
 from devsync.ai_tools.claude import ClaudeTool
 from devsync.ai_tools.cline import ClineTool
 from devsync.ai_tools.codex import CodexTool
+from devsync.ai_tools.continuedev import ContinueTool
 from devsync.ai_tools.copilot import CopilotTool
 from devsync.ai_tools.cursor import CursorTool
 from devsync.ai_tools.gemini import GeminiTool
+from devsync.ai_tools.jetbrains import JetBrainsTool
+from devsync.ai_tools.junie import JunieTool
 from devsync.ai_tools.kiro import KiroTool
+from devsync.ai_tools.opencode import OpenCodeTool
+from devsync.ai_tools.openhands import OpenHandsTool
 from devsync.ai_tools.roo import RooTool
+from devsync.ai_tools.tabnine import TabnineTool
+from devsync.ai_tools.trae import TraeTool
 from devsync.ai_tools.winsurf import WinsurfTool
+from devsync.ai_tools.zed import ZedTool
 from devsync.core.models import AIToolType
 
 
@@ -32,6 +44,18 @@ class AIToolDetector:
             AIToolType.CODEX: CodexTool(),
             AIToolType.GEMINI: GeminiTool(),
             AIToolType.ANTIGRAVITY: AntigravityTool(),
+            AIToolType.AMAZONQ: AmazonQTool(),
+            AIToolType.JETBRAINS: JetBrainsTool(),
+            AIToolType.JUNIE: JunieTool(),
+            AIToolType.ZED: ZedTool(),
+            AIToolType.CONTINUE: ContinueTool(),
+            AIToolType.AIDER: AiderTool(),
+            AIToolType.TRAE: TraeTool(),
+            AIToolType.AUGMENT: AugmentTool(),
+            AIToolType.TABNINE: TabnineTool(),
+            AIToolType.OPENHANDS: OpenHandsTool(),
+            AIToolType.AMP: AmpTool(),
+            AIToolType.OPENCODE: OpenCodeTool(),
         }
 
     def detect_installed_tools(self) -> list[AITool]:
@@ -96,6 +120,18 @@ class AIToolDetector:
             AIToolType.CODEX,
             AIToolType.GEMINI,
             AIToolType.ANTIGRAVITY,
+            AIToolType.AMAZONQ,
+            AIToolType.JETBRAINS,
+            AIToolType.JUNIE,
+            AIToolType.ZED,
+            AIToolType.CONTINUE,
+            AIToolType.AIDER,
+            AIToolType.TRAE,
+            AIToolType.AUGMENT,
+            AIToolType.TABNINE,
+            AIToolType.OPENHANDS,
+            AIToolType.AMP,
+            AIToolType.OPENCODE,
         ]
 
         for tool_type in priority:

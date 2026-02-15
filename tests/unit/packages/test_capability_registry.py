@@ -73,6 +73,18 @@ class TestCapabilityRegistry:
         assert AIToolType.CODEX in CAPABILITY_REGISTRY
         assert AIToolType.GEMINI in CAPABILITY_REGISTRY
         assert AIToolType.ANTIGRAVITY in CAPABILITY_REGISTRY
+        assert AIToolType.AMAZONQ in CAPABILITY_REGISTRY
+        assert AIToolType.JETBRAINS in CAPABILITY_REGISTRY
+        assert AIToolType.JUNIE in CAPABILITY_REGISTRY
+        assert AIToolType.ZED in CAPABILITY_REGISTRY
+        assert AIToolType.CONTINUE in CAPABILITY_REGISTRY
+        assert AIToolType.AIDER in CAPABILITY_REGISTRY
+        assert AIToolType.TRAE in CAPABILITY_REGISTRY
+        assert AIToolType.AUGMENT in CAPABILITY_REGISTRY
+        assert AIToolType.TABNINE in CAPABILITY_REGISTRY
+        assert AIToolType.OPENHANDS in CAPABILITY_REGISTRY
+        assert AIToolType.AMP in CAPABILITY_REGISTRY
+        assert AIToolType.OPENCODE in CAPABILITY_REGISTRY
 
     def test_cursor_capabilities(self) -> None:
         """Test Cursor IDE capabilities."""
@@ -251,7 +263,7 @@ class TestCapabilityRegistry:
         tools = get_supported_tools_for_component(ComponentType.INSTRUCTION)
 
         # All tools support instructions
-        assert len(tools) == 10
+        assert len(tools) == 22
         assert AIToolType.CURSOR in tools
         assert AIToolType.CLAUDE in tools
         assert AIToolType.WINSURF in tools
@@ -262,19 +274,39 @@ class TestCapabilityRegistry:
         assert AIToolType.CODEX in tools
         assert AIToolType.GEMINI in tools
         assert AIToolType.ANTIGRAVITY in tools
+        assert AIToolType.AMAZONQ in tools
+        assert AIToolType.JETBRAINS in tools
+        assert AIToolType.JUNIE in tools
+        assert AIToolType.ZED in tools
+        assert AIToolType.CONTINUE in tools
+        assert AIToolType.AIDER in tools
+        assert AIToolType.TRAE in tools
+        assert AIToolType.AUGMENT in tools
+        assert AIToolType.TABNINE in tools
+        assert AIToolType.OPENHANDS in tools
+        assert AIToolType.AMP in tools
+        assert AIToolType.OPENCODE in tools
 
     def test_get_supported_tools_for_mcp_server(self) -> None:
         """Test getting tools that support MCP servers."""
         tools = get_supported_tools_for_component(ComponentType.MCP_SERVER)
 
-        # Claude, Cursor, Windsurf, Copilot, Roo Code, and Antigravity support MCP
-        assert len(tools) == 6
+        # Multiple tools support MCP
+        assert len(tools) == 14
         assert AIToolType.CLAUDE in tools
         assert AIToolType.CURSOR in tools
         assert AIToolType.WINSURF in tools
         assert AIToolType.COPILOT in tools
         assert AIToolType.ROO in tools
         assert AIToolType.ANTIGRAVITY in tools
+        assert AIToolType.AMAZONQ in tools
+        assert AIToolType.JETBRAINS in tools
+        assert AIToolType.ZED in tools
+        assert AIToolType.CONTINUE in tools
+        assert AIToolType.TRAE in tools
+        assert AIToolType.AUGMENT in tools
+        assert AIToolType.TABNINE in tools
+        assert AIToolType.OPENHANDS in tools
 
     def test_get_supported_tools_for_hook(self) -> None:
         """Test getting tools that support hooks."""
@@ -297,8 +329,8 @@ class TestCapabilityRegistry:
         """Test getting tools that support resources."""
         tools = get_supported_tools_for_component(ComponentType.RESOURCE)
 
-        # Cursor, Claude, Windsurf, Kiro, Cline, Roo Code, Codex, Gemini, and Antigravity support resources
-        assert len(tools) == 9
+        # All tools except Copilot support resources
+        assert len(tools) == 21
         assert AIToolType.CURSOR in tools
         assert AIToolType.CLAUDE in tools
         assert AIToolType.WINSURF in tools
@@ -308,7 +340,19 @@ class TestCapabilityRegistry:
         assert AIToolType.CODEX in tools
         assert AIToolType.GEMINI in tools
         assert AIToolType.ANTIGRAVITY in tools
-        assert AIToolType.COPILOT not in tools  # Instructions only
+        assert AIToolType.AMAZONQ in tools
+        assert AIToolType.JETBRAINS in tools
+        assert AIToolType.JUNIE in tools
+        assert AIToolType.ZED in tools
+        assert AIToolType.CONTINUE in tools
+        assert AIToolType.AIDER in tools
+        assert AIToolType.TRAE in tools
+        assert AIToolType.AUGMENT in tools
+        assert AIToolType.TABNINE in tools
+        assert AIToolType.OPENHANDS in tools
+        assert AIToolType.AMP in tools
+        assert AIToolType.OPENCODE in tools
+        assert AIToolType.COPILOT not in tools  # Instructions and MCP only
 
     def test_validate_component_support_true(self) -> None:
         """Test validating supported component."""

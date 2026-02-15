@@ -7,6 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-02-15
+
+### Added
+- **12 New IDE Integrations** - Expanded from 10 to 22 supported AI coding tools
+  - **Amazon Q** (#33) - Multi-file instructions in `.amazonq/rules/`, MCP support
+  - **JetBrains AI** (#34) - Multi-file instructions in `.aiassistant/rules/`, MCP support
+  - **Junie** (#35) - Single-file instructions in `.junie/guidelines.md` with section markers
+  - **Zed** (#36) - Single-file instructions in `.rules` with section markers, MCP support
+  - **Continue.dev** (#39) - Multi-file instructions in `.continue/rules/`, MCP support
+  - **Aider** (#40) - Single-file instructions in `CONVENTIONS.md` with section markers
+  - **Trae** (#41) - Multi-file instructions in `.trae/rules/`, MCP support
+  - **Augment** (#42) - Multi-file instructions in `.augment/rules/`, MCP support
+  - **Tabnine** (#43) - Multi-file instructions in `.tabnine/guidelines/`, MCP support
+  - **OpenHands** (#44) - Multi-file instructions in `.openhands/microagents/`, MCP support
+  - **Amp** (#45) - Single-file instructions in `AGENTS.md` with section markers
+  - **OpenCode** (#47) - Single-file instructions in `AGENTS.md` with section markers
+- Full package system support (translators, capability registry) for all 12 new IDEs
+- Comprehensive test coverage for all new tools (200+ new tests)
+
 ## [0.9.0] - 2026-02-15
 
 ### Added

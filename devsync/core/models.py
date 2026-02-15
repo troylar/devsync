@@ -19,6 +19,18 @@ class AIToolType(Enum):
     CODEX = "codex"
     GEMINI = "gemini"
     ANTIGRAVITY = "antigravity"
+    AMAZONQ = "amazonq"
+    JETBRAINS = "jetbrains"
+    JUNIE = "junie"
+    ZED = "zed"
+    CONTINUE = "continue"
+    AIDER = "aider"
+    TRAE = "trae"
+    AUGMENT = "augment"
+    TABNINE = "tabnine"
+    OPENHANDS = "openhands"
+    AMP = "amp"
+    OPENCODE = "opencode"
 
 
 class ConflictResolution(Enum):
@@ -431,6 +443,18 @@ class TemplateFile:
             "codex",
             "gemini",
             "antigravity",
+            "amazonq",
+            "jetbrains",
+            "junie",
+            "zed",
+            "continue",
+            "aider",
+            "trae",
+            "augment",
+            "tabnine",
+            "openhands",
+            "amp",
+            "opencode",
         ]
         if self.ide not in valid_ides:
             raise ValueError(f"Invalid IDE type: {self.ide}. Must be one of {valid_ides}")

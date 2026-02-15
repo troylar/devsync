@@ -11,7 +11,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Known Vulnerabilities](https://snyk.io/test/github/troylar/devsync/badge.svg)](https://snyk.io/test/github/troylar/devsync)
 
-**Works with:** Antigravity • Claude Code • Claude Desktop • Cline • Codex CLI • Cursor • Gemini CLI • GitHub Copilot • Kiro • Roo Code • Windsurf
+**Works with:** Aider • Amazon Q • Amp • Antigravity • Augment • Claude Code • Claude Desktop • Cline • Codex CLI • Continue.dev • Cursor • Gemini CLI • GitHub Copilot • JetBrains AI • Junie • Kiro • OpenCode • OpenHands • Roo Code • Tabnine • Trae • Windsurf • Zed
 
 </div>
 
@@ -116,13 +116,21 @@ Manage Model Context Protocol servers across your team:
 **Supported IDEs:**
 | IDE | MCP Config Location | Tool Limit |
 |-----|---------------------|------------|
+| Amazon Q | `.amazonq/mcp.json` | Unlimited |
 | Antigravity | `.mcp.json` | Unlimited |
+| Augment | `.augment/mcp.json` | Unlimited |
 | Claude Code | `.claude/settings.local.json` | Unlimited |
 | Claude Desktop | `~/Library/Application Support/Claude/claude_desktop_config.json` | Unlimited |
+| Continue.dev | `.continue/config.json` | Unlimited |
 | Cursor | `.cursor/mcp.json` or `~/.cursor/mcp.json` | 40 tools |
 | Gemini CLI | `~/.gemini/settings.json` | Unlimited |
-| Windsurf | `~/.codeium/windsurf/mcp_config.json` | 100 tools |
 | GitHub Copilot | `.vscode/mcp.json` | 128 tools |
+| JetBrains AI | `.aiassistant/mcp.json` | Unlimited |
+| OpenHands | `.openhands/mcp.json` | Unlimited |
+| Tabnine | `.tabnine/mcp.json` | Unlimited |
+| Trae | `.mcp.json` | Unlimited |
+| Windsurf | `~/.codeium/windsurf/mcp_config.json` | 100 tools |
+| Zed | `.zed/settings.json` | Unlimited |
 
 **Key Commands:**
 ```bash
@@ -263,16 +271,16 @@ Any IDE-specific content from Git repositories:
 
 Complete configuration bundles with multiple component types:
 
-| Component | Antigravity | Claude | Cline | Codex CLI | Cursor | Gemini | Kiro | Roo Code | Windsurf | Copilot |
-|-----------|-------------|--------|-------|----------|--------|--------|------|----------|----------|---------|
-| Instructions | `.agent/rules/` | `.claude/rules/` | `.clinerules/` | `AGENTS.md` | `.cursor/rules/` | `GEMINI.md` | `.kiro/steering/` | `.roo/rules/` | `.windsurf/rules/` | `.github/instructions/` |
-| MCP Servers | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ | ✅ | ✅ | ✅ |
-| Hooks | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Commands | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Skills | ❌ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Workflows | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ✅ | ❌ |
-| Memory Files | ❌ | ✅ (CLAUDE.md) | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Resources | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Component | Support Summary |
+|-----------|----------------|
+| Instructions | All 22 IDEs |
+| MCP Servers | Amazon Q, Antigravity, Augment, Claude, Continue.dev, Copilot, Cursor, JetBrains AI, OpenHands, Roo Code, Tabnine, Trae, Windsurf, Zed |
+| Hooks | Claude Code |
+| Commands | Claude Code, Roo Code |
+| Skills | Claude Code |
+| Workflows | Windsurf |
+| Memory Files | Claude Code (CLAUDE.md) |
+| Resources | All IDEs except Copilot |
 
 ### MCP Server Configurations
 
@@ -292,7 +300,7 @@ Model Context Protocol server setups for enhanced AI capabilities:
 
 - Python 3.10 or higher
 - Git (for cloning template repositories)
-- One of: Antigravity, Claude Code, Claude Desktop, Cline, Codex CLI, Cursor, Gemini CLI, GitHub Copilot, Kiro, Roo Code, or Windsurf
+- One or more supported AI coding tools (Aider, Amazon Q, Amp, Antigravity, Augment, Claude Code, Cline, Codex CLI, Continue.dev, Cursor, Gemini CLI, GitHub Copilot, JetBrains AI, Junie, Kiro, OpenCode, OpenHands, Roo Code, Tabnine, Trae, Windsurf, Zed)
 
 ### Install DevSync
 

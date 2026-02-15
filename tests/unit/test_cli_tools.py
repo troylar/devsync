@@ -44,6 +44,22 @@ def mock_detector_no_tools(monkeypatch, temp_dir):
     monkeypatch.setattr("devsync.ai_tools.gemini.Path.home", lambda: home_dir)
     monkeypatch.setattr("devsync.ai_tools.antigravity.shutil.which", lambda cmd: None)
     monkeypatch.setattr("devsync.ai_tools.antigravity.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.amazonq.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.amazonq.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.jetbrains.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.junie.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.zed.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.continuedev.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.aider.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.aider.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.trae.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.augment.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.augment.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.tabnine.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.openhands.Path.home", lambda: home_dir)
+    monkeypatch.setattr("devsync.ai_tools.amp.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.opencode.shutil.which", lambda cmd: None)
+    monkeypatch.setattr("devsync.ai_tools.opencode.Path.home", lambda: home_dir)
 
 
 class TestShowTools:

@@ -398,6 +398,431 @@ class AntigravityTranslator(ComponentTranslator):
         )
 
 
+class AmazonQTranslator(ComponentTranslator):
+    """Translator for Amazon Q (.amazonq/rules/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.AMAZONQ
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Amazon Q .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".amazonq/rules/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Amazon Q format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".amazonq/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class JetBrainsTranslator(ComponentTranslator):
+    """Translator for JetBrains AI (.aiassistant/rules/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.JETBRAINS
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to JetBrains AI .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".aiassistant/rules/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to JetBrains format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".aiassistant/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class JunieTranslator(ComponentTranslator):
+    """Translator for Junie (.junie/guidelines.md at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.JUNIE
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Junie format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=".junie/guidelines.md",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Junie does not support MCP servers."""
+        raise NotImplementedError("Junie does not support MCP servers")
+
+
+class ZedTranslator(ComponentTranslator):
+    """Translator for Zed (.rules at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.ZED
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Zed format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=".rules",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Zed format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".zed/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class ContinueTranslator(ComponentTranslator):
+    """Translator for Continue.dev (.continue/rules/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.CONTINUE
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Continue.dev .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".continue/rules/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Continue.dev format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".continue/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class AiderTranslator(ComponentTranslator):
+    """Translator for Aider (CONVENTIONS.md at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.AIDER
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Aider format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path="CONVENTIONS.md",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Aider does not support MCP servers."""
+        raise NotImplementedError("Aider does not support MCP servers")
+
+
+class TraeTranslator(ComponentTranslator):
+    """Translator for Trae (.trae/rules/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.TRAE
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Trae .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".trae/rules/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Trae format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class AugmentTranslator(ComponentTranslator):
+    """Translator for Augment (.augment/rules/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.AUGMENT
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Augment .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".augment/rules/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Augment format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".augment/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class TabnineTranslator(ComponentTranslator):
+    """Translator for Tabnine (.tabnine/guidelines/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.TABNINE
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Tabnine .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".tabnine/guidelines/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to Tabnine format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".tabnine/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class OpenHandsTranslator(ComponentTranslator):
+    """Translator for OpenHands (.openhands/microagents/*.md)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.OPENHANDS
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to OpenHands .md format."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        target_path = f".openhands/microagents/{component.name}.md"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Translate MCP server config to OpenHands format."""
+        mcp_path = package_root / component.file
+        with open(mcp_path, "r") as f:
+            content = f.read()
+
+        target_path = f".openhands/mcp/{component.name}.json"
+
+        return TranslatedComponent(
+            component_type=ComponentType.MCP_SERVER,
+            component_name=component.name,
+            target_path=target_path,
+            content=content,
+            metadata={"credentials": [c.to_dict() for c in component.credentials]},
+        )
+
+
+class AmpTranslator(ComponentTranslator):
+    """Translator for Amp (AGENTS.md at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.AMP
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Amp format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path="AGENTS.md",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Amp does not support MCP servers."""
+        raise NotImplementedError("Amp does not support MCP servers")
+
+
+class OpenCodeTranslator(ComponentTranslator):
+    """Translator for OpenCode (AGENTS.md at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.OPENCODE
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to OpenCode format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path="AGENTS.md",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """OpenCode does not support MCP servers."""
+        raise NotImplementedError("OpenCode does not support MCP servers")
+
+
 class CopilotTranslator(ComponentTranslator):
     """Translator for GitHub Copilot (.github/instructions/)."""
 
@@ -462,6 +887,18 @@ def get_translator(tool_type: AIToolType) -> ComponentTranslator:
         AIToolType.GEMINI: GeminiTranslator,
         AIToolType.ANTIGRAVITY: AntigravityTranslator,
         AIToolType.COPILOT: CopilotTranslator,
+        AIToolType.AMAZONQ: AmazonQTranslator,
+        AIToolType.JETBRAINS: JetBrainsTranslator,
+        AIToolType.JUNIE: JunieTranslator,
+        AIToolType.ZED: ZedTranslator,
+        AIToolType.CONTINUE: ContinueTranslator,
+        AIToolType.AIDER: AiderTranslator,
+        AIToolType.TRAE: TraeTranslator,
+        AIToolType.AUGMENT: AugmentTranslator,
+        AIToolType.TABNINE: TabnineTranslator,
+        AIToolType.OPENHANDS: OpenHandsTranslator,
+        AIToolType.AMP: AmpTranslator,
+        AIToolType.OPENCODE: OpenCodeTranslator,
     }
 
     translator_class = translators.get(tool_type)

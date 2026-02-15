@@ -1,0 +1,67 @@
+"""Augment AI tool integration."""
+
+import shutil
+from pathlib import Path
+
+from devsync.ai_tools.base import AITool
+from devsync.core.models import AIToolType
+
+
+class AugmentTool(AITool):
+    """Integration for Augment Code.
+
+    Augment uses .augment/rules/*.md for project-level instructions.
+    """
+
+    @property
+    def tool_type(self) -> AIToolType:
+        """Return the AI tool type identifier."""
+        return AIToolType.AUGMENT
+
+    @property
+    def tool_name(self) -> str:
+        """Return human-readable tool name."""
+        return "Augment"
+
+    def is_installed(self) -> bool:
+        """Check if Augment is installed on the system.
+
+        Returns:
+            True if augment binary is found on PATH or .augment/ directory exists
+        """
+        if shutil.which("augment") is not None:
+            return True
+        augment_dir = Path.home() / ".augment"
+        return augment_dir.exists()
+
+    def get_instructions_directory(self) -> Path:
+        """Get the directory where instructions should be installed.
+
+        Raises:
+            NotImplementedError: Augment only supports project-level installation
+        """
+        raise NotImplementedError(
+            f"{self.tool_name} global installation is not supported. "
+            "Please use project-level installation instead (--scope project)."
+        )
+
+    def get_instruction_file_extension(self) -> str:
+        """Get the file extension for Augment instructions.
+
+        Returns:
+            File extension including the dot
+        """
+        return ".md"
+
+    def get_project_instructions_directory(self, project_root: Path) -> Path:
+        """Get the directory for project-specific Augment instructions.
+
+        Args:
+            project_root: Path to the project root directory
+
+        Returns:
+            Path to project instructions directory (.augment/rules/)
+        """
+        instructions_dir = project_root / ".augment" / "rules"
+        instructions_dir.mkdir(parents=True, exist_ok=True)
+        return instructions_dir

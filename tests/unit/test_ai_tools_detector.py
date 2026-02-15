@@ -86,13 +86,63 @@ def mock_all_tools_installed(monkeypatch, temp_dir):
     (home_dir / ".gemini" / "antigravity").mkdir(parents=True, exist_ok=True)
     monkeypatch.setattr("devsync.ai_tools.antigravity.shutil.which", lambda cmd: "/usr/local/bin/antigravity")
 
+    # Amazon Q detection: binary on PATH or ~/.amazonq/ exists
+    (home_dir / ".amazonq").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.amazonq.shutil.which", lambda cmd: "/usr/local/bin/q")
+    monkeypatch.setattr("devsync.ai_tools.amazonq.Path.home", lambda: home_dir)
+
+    # JetBrains detection: config directory exists
+    if "darwin" in os.uname().sysname.lower():
+        (home_dir / "Library" / "Application Support" / "JetBrains").mkdir(parents=True, exist_ok=True)
+    else:
+        (home_dir / ".config" / "JetBrains").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.jetbrains.Path.home", lambda: home_dir)
+
+    # Junie detection: JetBrains config directory (same as jetbrains)
+    monkeypatch.setattr("devsync.ai_tools.junie.Path.home", lambda: home_dir)
+
+    # Zed detection: binary on PATH
+    monkeypatch.setattr("devsync.ai_tools.zed.shutil.which", lambda cmd: "/usr/local/bin/zed")
+
+    # Continue.dev detection: ~/.continue/ exists
+    (home_dir / ".continue").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.continuedev.Path.home", lambda: home_dir)
+
+    # Aider detection: binary on PATH or ~/.aider.conf.yml exists
+    monkeypatch.setattr("devsync.ai_tools.aider.shutil.which", lambda cmd: "/usr/local/bin/aider")
+    monkeypatch.setattr("devsync.ai_tools.aider.Path.home", lambda: home_dir)
+
+    # Trae detection: binary on PATH
+    monkeypatch.setattr("devsync.ai_tools.trae.shutil.which", lambda cmd: "/usr/local/bin/trae")
+
+    # Augment detection: binary on PATH or ~/.augment/ exists
+    (home_dir / ".augment").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.augment.shutil.which", lambda cmd: "/usr/local/bin/augment")
+    monkeypatch.setattr("devsync.ai_tools.augment.Path.home", lambda: home_dir)
+
+    # Tabnine detection: ~/.tabnine/ exists
+    (home_dir / ".tabnine").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.tabnine.Path.home", lambda: home_dir)
+
+    # OpenHands detection: ~/.openhands/ exists
+    (home_dir / ".openhands").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.openhands.Path.home", lambda: home_dir)
+
+    # Amp detection: binary on PATH
+    monkeypatch.setattr("devsync.ai_tools.amp.shutil.which", lambda cmd: "/usr/local/bin/amp")
+
+    # OpenCode detection: binary on PATH or ~/.opencode/ exists
+    (home_dir / ".opencode").mkdir(parents=True, exist_ok=True)
+    monkeypatch.setattr("devsync.ai_tools.opencode.shutil.which", lambda cmd: "/usr/local/bin/opencode")
+    monkeypatch.setattr("devsync.ai_tools.opencode.Path.home", lambda: home_dir)
+
 
 class TestAIToolDetector:
     """Test suite for AIToolDetector."""
 
     def test_init_creates_all_tools(self, detector):
         """Test that detector initializes with all supported tools."""
-        assert len(detector.tools) == 10
+        assert len(detector.tools) == 22
         assert AIToolType.CURSOR in detector.tools
         assert AIToolType.COPILOT in detector.tools
         assert AIToolType.WINSURF in detector.tools
@@ -103,6 +153,18 @@ class TestAIToolDetector:
         assert AIToolType.CODEX in detector.tools
         assert AIToolType.GEMINI in detector.tools
         assert AIToolType.ANTIGRAVITY in detector.tools
+        assert AIToolType.AMAZONQ in detector.tools
+        assert AIToolType.JETBRAINS in detector.tools
+        assert AIToolType.JUNIE in detector.tools
+        assert AIToolType.ZED in detector.tools
+        assert AIToolType.CONTINUE in detector.tools
+        assert AIToolType.AIDER in detector.tools
+        assert AIToolType.TRAE in detector.tools
+        assert AIToolType.AUGMENT in detector.tools
+        assert AIToolType.TABNINE in detector.tools
+        assert AIToolType.OPENHANDS in detector.tools
+        assert AIToolType.AMP in detector.tools
+        assert AIToolType.OPENCODE in detector.tools
 
     def test_detect_installed_tools_none(self, temp_dir, monkeypatch):
         """Test detect_installed_tools when no tools are installed."""
@@ -114,6 +176,22 @@ class TestAIToolDetector:
         monkeypatch.setattr("devsync.ai_tools.gemini.Path.home", lambda: home_dir)
         monkeypatch.setattr("devsync.ai_tools.antigravity.shutil.which", lambda cmd: None)
         monkeypatch.setattr("devsync.ai_tools.antigravity.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.amazonq.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.amazonq.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.jetbrains.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.junie.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.zed.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.continuedev.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.aider.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.aider.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.trae.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.augment.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.augment.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.tabnine.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.openhands.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.amp.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.opencode.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.opencode.Path.home", lambda: home_dir)
 
         # Create fresh detector with mocked paths
         detector = AIToolDetector()
@@ -125,7 +203,7 @@ class TestAIToolDetector:
         # Create fresh detector with mocked paths
         detector = AIToolDetector()
         installed = detector.detect_installed_tools()
-        assert len(installed) == 10
+        assert len(installed) == 22
 
     def test_get_tool_by_name_valid(self, detector):
         """Test get_tool_by_name with valid tool name."""
@@ -197,6 +275,22 @@ class TestAIToolDetector:
         monkeypatch.setattr("devsync.ai_tools.gemini.Path.home", lambda: home_dir)
         monkeypatch.setattr("devsync.ai_tools.antigravity.shutil.which", lambda cmd: None)
         monkeypatch.setattr("devsync.ai_tools.antigravity.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.amazonq.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.amazonq.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.jetbrains.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.junie.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.zed.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.continuedev.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.aider.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.aider.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.trae.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.augment.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.augment.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.tabnine.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.openhands.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.amp.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.opencode.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.opencode.Path.home", lambda: home_dir)
 
         detector = AIToolDetector()
         primary = detector.get_primary_tool()
@@ -217,6 +311,22 @@ class TestAIToolDetector:
         monkeypatch.setattr("devsync.ai_tools.gemini.Path.home", lambda: home_dir)
         monkeypatch.setattr("devsync.ai_tools.antigravity.shutil.which", lambda cmd: None)
         monkeypatch.setattr("devsync.ai_tools.antigravity.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.amazonq.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.amazonq.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.jetbrains.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.junie.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.zed.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.continuedev.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.aider.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.aider.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.trae.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.augment.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.augment.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.tabnine.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.openhands.Path.home", lambda: home_dir)
+        monkeypatch.setattr("devsync.ai_tools.amp.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.opencode.shutil.which", lambda cmd: None)
+        monkeypatch.setattr("devsync.ai_tools.opencode.Path.home", lambda: home_dir)
 
         detector = AIToolDetector()
         assert detector.is_any_tool_installed() is False
@@ -224,7 +334,7 @@ class TestAIToolDetector:
     def test_get_tool_names(self, detector):
         """Test get_tool_names returns all tool names."""
         names = detector.get_tool_names()
-        assert len(names) == 10
+        assert len(names) == 22
         assert "cursor" in names
         assert "copilot" in names
         assert "winsurf" in names
@@ -235,6 +345,18 @@ class TestAIToolDetector:
         assert "codex" in names
         assert "gemini" in names
         assert "antigravity" in names
+        assert "amazonq" in names
+        assert "jetbrains" in names
+        assert "junie" in names
+        assert "zed" in names
+        assert "continue" in names
+        assert "aider" in names
+        assert "trae" in names
+        assert "augment" in names
+        assert "tabnine" in names
+        assert "openhands" in names
+        assert "amp" in names
+        assert "opencode" in names
 
     def test_validate_tool_name_valid(self, detector):
         """Test validate_tool_name with valid name."""
@@ -249,7 +371,7 @@ class TestAIToolDetector:
         """Test get_detection_summary."""
         detector = AIToolDetector()
         summary = detector.get_detection_summary()
-        assert len(summary) == 10
+        assert len(summary) == 22
         assert all(isinstance(v, bool) for v in summary.values())
 
     def test_format_detection_summary(self, mock_all_tools_installed):
