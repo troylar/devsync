@@ -144,7 +144,7 @@ class TestAIToolDetector:
 
     def test_init_creates_all_tools(self, detector):
         """Test that detector initializes with all supported tools."""
-        assert len(detector.tools) == 22
+        assert len(detector.tools) == 23
         assert AIToolType.CURSOR in detector.tools
         assert AIToolType.COPILOT in detector.tools
         assert AIToolType.WINSURF in detector.tools
@@ -205,7 +205,7 @@ class TestAIToolDetector:
         # Create fresh detector with mocked paths
         detector = AIToolDetector()
         installed = detector.detect_installed_tools()
-        assert len(installed) == 22
+        assert len(installed) == 23
 
     def test_get_tool_by_name_valid(self, detector):
         """Test get_tool_by_name with valid tool name."""
@@ -336,7 +336,7 @@ class TestAIToolDetector:
     def test_get_tool_names(self, detector):
         """Test get_tool_names returns all tool names."""
         names = detector.get_tool_names()
-        assert len(names) == 22
+        assert len(names) == 23
         assert "cursor" in names
         assert "copilot" in names
         assert "winsurf" in names
@@ -373,7 +373,7 @@ class TestAIToolDetector:
         """Test get_detection_summary."""
         detector = AIToolDetector()
         summary = detector.get_detection_summary()
-        assert len(summary) == 22
+        assert len(summary) == 23
         assert all(isinstance(v, bool) for v in summary.values())
 
     def test_format_detection_summary(self, mock_all_tools_installed):

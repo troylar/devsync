@@ -461,6 +461,24 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
             "DevSync manages sections within this file using HTML comment markers."
         ),
     ),
+    AIToolType.ANTEROOM: IDECapability(
+        tool_type=AIToolType.ANTEROOM,
+        tool_name="Anteroom",
+        supported_components={
+            ComponentType.INSTRUCTION,
+            ComponentType.RESOURCE,
+        },
+        instructions_directory="",
+        instruction_file_extension=".md",
+        supports_project_scope=True,
+        supports_global_scope=False,
+        mcp_config_path=None,
+        mcp_project_config_path=None,
+        notes=(
+            "Anteroom uses a single ANTEROOM.md file at the project root. "
+            "DevSync manages sections within this file using HTML comment markers."
+        ),
+    ),
     AIToolType.COPILOT: IDECapability(
         tool_type=AIToolType.COPILOT,
         tool_name="GitHub Copilot",

@@ -823,6 +823,34 @@ class OpenCodeTranslator(ComponentTranslator):
         raise NotImplementedError("OpenCode does not support MCP servers")
 
 
+class AnteroomTranslator(ComponentTranslator):
+    """Translator for Anteroom (ANTEROOM.md at project root)."""
+
+    @property
+    def tool_type(self) -> AIToolType:
+        return AIToolType.ANTEROOM
+
+    def translate_instruction(self, component: InstructionComponent, package_root: Path) -> TranslatedComponent:
+        """Translate instruction to Anteroom format with section markers."""
+        instruction_path = package_root / component.file
+        with open(instruction_path, "r") as f:
+            content = f.read()
+
+        wrapped = f"<!-- devsync:start:{component.name} -->\n{content}\n<!-- devsync:end:{component.name} -->"
+
+        return TranslatedComponent(
+            component_type=ComponentType.INSTRUCTION,
+            component_name=component.name,
+            target_path="ANTEROOM.md",
+            content=wrapped,
+            metadata={"section_based": True},
+        )
+
+    def translate_mcp_server(self, component: MCPServerComponent, package_root: Path) -> TranslatedComponent:
+        """Anteroom does not support MCP servers."""
+        raise NotImplementedError("Anteroom does not support MCP servers")
+
+
 class CopilotTranslator(ComponentTranslator):
     """Translator for GitHub Copilot (.github/instructions/)."""
 
@@ -899,6 +927,7 @@ def get_translator(tool_type: AIToolType) -> ComponentTranslator:
         AIToolType.OPENHANDS: OpenHandsTranslator,
         AIToolType.AMP: AmpTranslator,
         AIToolType.OPENCODE: OpenCodeTranslator,
+        AIToolType.ANTEROOM: AnteroomTranslator,
     }
 
     translator_class = translators.get(tool_type)
