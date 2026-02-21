@@ -39,7 +39,7 @@ devsync install
 - **Instructions** -- share coding standards, style guides, and AI prompts from Git repos
 - **MCP Servers** -- distribute Model Context Protocol configs with secure credential management
 - **Packages** -- bundle instructions, MCP servers, hooks, commands, and resources together
-- **22 IDE integrations** -- Claude Code, Cursor, Windsurf, GitHub Copilot, and 18 more
+- **23 IDE integrations** -- Claude Code, Cursor, Windsurf, GitHub Copilot, and 19 more
 - **Templates** -- IDE-targeted content with slash commands, hooks, and backups
 - **Conflict resolution** -- skip, overwrite, or rename when files already exist
 

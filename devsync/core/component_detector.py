@@ -242,6 +242,7 @@ class ComponentDetector:
     SINGLE_INSTRUCTION_FILES = {
         ".github/copilot-instructions.md": "copilot",
         "AGENTS.md": "codex",
+        "ANTEROOM.md": "anteroom",
     }
 
     INSTRUCTION_EXTENSIONS = {".md", ".mdc", ".instructions.md"}

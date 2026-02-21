@@ -32,6 +32,7 @@ ai-config-kit/
 │   ├── winsurf.py    # Windsurf (.windsurf/rules/*.md)
 │   ├── codex.py      # OpenAI Codex CLI (AGENTS.md sections)
 │   ├── copilot.py    # GitHub Copilot (.github/instructions/*.md)
+│   ├── anteroom.py   # Anteroom (ANTEROOM.md sections)
 │   └── detector.py   # Tool detection logic
 ├── cli/               # Typer CLI commands
 │   ├── main.py       # CLI app definition
@@ -397,6 +398,7 @@ Different IDEs support different component types:
 - **Claude Code**: All components (instructions, MCP, hooks, commands, resources)
 - **Cline**: Instructions and resources only
 - **Codex CLI**: Instructions and resources only (via AGENTS.md sections)
+- **Anteroom**: Instructions and resources only (via ANTEROOM.md sections)
 - **Cursor**: Instructions and resources only
 - **Kiro**: Instructions and resources only
 - **Roo Code**: Instructions, MCP, commands, and resources
@@ -410,6 +412,7 @@ Components are translated to IDE-specific formats:
 - **Claude Code**: `.md` files in `.claude/rules/`, `.claude/hooks/`, `.claude/commands/`
 - **Cline**: `.md` files in `.clinerules/`
 - **Codex CLI**: Sections in `AGENTS.md` at project root (using HTML comment markers)
+- **Anteroom**: Sections in `ANTEROOM.md` at project root (using HTML comment markers)
 - **Cursor**: `.mdc` files in `.cursor/rules/`
 - **Roo Code**: `.md` files in `.roo/rules/`, `.roo/commands/`
 - **Kiro**: `.md` files in `.kiro/steering/`

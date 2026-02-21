@@ -5,6 +5,7 @@ from typing import Optional
 from devsync.ai_tools.aider import AiderTool
 from devsync.ai_tools.amazonq import AmazonQTool
 from devsync.ai_tools.amp import AmpTool
+from devsync.ai_tools.anteroom import AnteroomTool
 from devsync.ai_tools.antigravity import AntigravityTool
 from devsync.ai_tools.augment import AugmentTool
 from devsync.ai_tools.base import AITool
@@ -56,6 +57,7 @@ class AIToolDetector:
             AIToolType.OPENHANDS: OpenHandsTool(),
             AIToolType.AMP: AmpTool(),
             AIToolType.OPENCODE: OpenCodeTool(),
+            AIToolType.ANTEROOM: AnteroomTool(),
         }
 
     def detect_installed_tools(self) -> list[AITool]:
@@ -132,6 +134,7 @@ class AIToolDetector:
             AIToolType.OPENHANDS,
             AIToolType.AMP,
             AIToolType.OPENCODE,
+            AIToolType.ANTEROOM,
         ]
 
         for tool_type in priority:

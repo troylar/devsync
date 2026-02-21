@@ -85,6 +85,7 @@ class TestCapabilityRegistry:
         assert AIToolType.OPENHANDS in CAPABILITY_REGISTRY
         assert AIToolType.AMP in CAPABILITY_REGISTRY
         assert AIToolType.OPENCODE in CAPABILITY_REGISTRY
+        assert AIToolType.ANTEROOM in CAPABILITY_REGISTRY
 
     def test_cursor_capabilities(self) -> None:
         """Test Cursor IDE capabilities."""
@@ -263,7 +264,7 @@ class TestCapabilityRegistry:
         tools = get_supported_tools_for_component(ComponentType.INSTRUCTION)
 
         # All tools support instructions
-        assert len(tools) == 22
+        assert len(tools) == 23
         assert AIToolType.CURSOR in tools
         assert AIToolType.CLAUDE in tools
         assert AIToolType.WINSURF in tools
@@ -286,6 +287,7 @@ class TestCapabilityRegistry:
         assert AIToolType.OPENHANDS in tools
         assert AIToolType.AMP in tools
         assert AIToolType.OPENCODE in tools
+        assert AIToolType.ANTEROOM in tools
 
     def test_get_supported_tools_for_mcp_server(self) -> None:
         """Test getting tools that support MCP servers."""
@@ -330,7 +332,7 @@ class TestCapabilityRegistry:
         tools = get_supported_tools_for_component(ComponentType.RESOURCE)
 
         # All tools except Copilot support resources
-        assert len(tools) == 21
+        assert len(tools) == 22
         assert AIToolType.CURSOR in tools
         assert AIToolType.CLAUDE in tools
         assert AIToolType.WINSURF in tools
@@ -352,6 +354,7 @@ class TestCapabilityRegistry:
         assert AIToolType.OPENHANDS in tools
         assert AIToolType.AMP in tools
         assert AIToolType.OPENCODE in tools
+        assert AIToolType.ANTEROOM in tools
         assert AIToolType.COPILOT not in tools  # Instructions and MCP only
 
     def test_validate_component_support_true(self) -> None:

@@ -31,6 +31,7 @@ class AIToolType(Enum):
     OPENHANDS = "openhands"
     AMP = "amp"
     OPENCODE = "opencode"
+    ANTEROOM = "anteroom"
 
 
 class ConflictResolution(Enum):
@@ -455,6 +456,7 @@ class TemplateFile:
             "openhands",
             "amp",
             "opencode",
+            "anteroom",
         ]
         if self.ide not in valid_ides:
             raise ValueError(f"Invalid IDE type: {self.ide}. Must be one of {valid_ides}")

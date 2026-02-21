@@ -40,9 +40,9 @@ Bundle instructions, MCP servers, hooks, commands, and resources into installabl
 
 <div class="feature-card" markdown>
 
-### 22 IDE Integrations
+### 23 IDE Integrations
 
-Claude Code, Cursor, Windsurf, GitHub Copilot, Codex CLI, Cline, Kiro, Roo Code, and 14 more.
+Claude Code, Cursor, Windsurf, GitHub Copilot, Codex CLI, Cline, Kiro, Roo Code, Anteroom, and 14 more.
 
 [See all IDEs](ide-integrations/index.md){ .md-button }
 
