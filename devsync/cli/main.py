@@ -80,7 +80,7 @@ def extract(
         None,
         "--component",
         "-c",
-        help="Only extract specific component types (rules, mcp, hooks, commands, skills, workflows). Repeatable.",
+        help="Component types to extract: rules, mcp, hooks, commands, skills, workflows, memory. Repeatable.",
     ),
     scope: str = typer.Option(
         "project",
@@ -91,8 +91,9 @@ def extract(
 ) -> None:
     """Extract practices from a project into a shareable package.
 
-    Reads your project's AI tool configs (rules, MCP servers, hooks, commands)
-    and produces a devsync-package.yaml with abstract practice declarations.
+    Reads your project's AI tool configs (rules, MCP servers, hooks, commands,
+    skills, workflows, memory files, resources) and produces a devsync-package.yaml
+    with abstract practice declarations.
 
     Examples:
       # AI-powered extraction
@@ -112,6 +113,9 @@ def extract(
 
       # Extract from global configs too
       devsync extract --scope all
+
+      # Combine filters: extract only rules and hooks from Claude Code
+      devsync extract --tool claude --component rules --component hooks
 
       # Upgrade v1 package to v2
       devsync extract --upgrade ./old-package

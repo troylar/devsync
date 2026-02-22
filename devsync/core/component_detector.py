@@ -325,6 +325,8 @@ class ComponentDetector:
     MAX_RESOURCE_SIZE = 200 * 1024 * 1024  # 200 MB
     WARN_RESOURCE_SIZE = 50 * 1024 * 1024  # 50 MB
 
+    VALID_SCOPES = {"project", "global", "all"}
+
     def __init__(self, project_root: Path, scope: str = "project", tool_filter: list[str] | None = None):
         """Initialize detector with project root.
 
@@ -332,7 +334,12 @@ class ComponentDetector:
             project_root: Path to project root directory
             scope: Detection scope — "project", "global", or "all"
             tool_filter: If set, only scan paths for these tool names
+
+        Raises:
+            ValueError: If scope is not one of project, global, all
         """
+        if scope not in self.VALID_SCOPES:
+            raise ValueError(f"Invalid scope: {scope!r}. Must be one of {self.VALID_SCOPES}")
         self.project_root = project_root.resolve()
         self.scope = scope
         self.tool_filter = tool_filter
@@ -477,7 +484,10 @@ class ComponentDetector:
                 paths_to_check.append((self.project_root / cap.mcp_project_config_path, cap.mcp_project_config_path))
 
             if self.scope in ("global", "all") and cap.mcp_config_path:
-                expanded = Path(cap.mcp_config_path).expanduser()
+                expanded = Path(cap.mcp_config_path).expanduser().resolve()
+                if not str(expanded).startswith(str(Path.home())):
+                    logger.warning(f"Skipping global MCP path that escapes home directory: {cap.mcp_config_path}")
+                    continue
                 paths_to_check.append((expanded, cap.mcp_config_path))
 
             json_key = cap.mcp_servers_json_key
