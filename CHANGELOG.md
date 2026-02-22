@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-02-22
+
+### Added
+- Semgrep SAST security scanning in CI (p/python, p/security-audit, p/owasp-top-ten rulesets) (#90)
+- pip-audit dependency vulnerability checking in CI (#90)
+- Dependency health checks in submit-pr skill: vulnerability audit, outdated deps, new dependency PyPI review, Semgrep scan (#90)
+- Version-controlled `.claude/commands/` and `.claude/rules/` files (#90)
+
+### Changed
+- Enhanced submit-pr security agent with OWASP ASVS Level 2 checks (#90)
+
 ## [0.14.1] - 2026-02-22
 
 ### Changed
