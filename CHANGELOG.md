@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-02-22
+
+### Added
+- **Pip-installable MCP server support** (#80)
+  - Auto-detect pip packages from MCP server commands (`python -m`, `uvx`, console scripts)
+  - `pip_package` field on `MCPDeclaration` with allowlist validation
+  - Interactive pip install during `devsync install` with version constraint checking
+  - `--skip-pip` flag to skip pip installations for MCP servers
+  - Comprehensive error handling: invalid specs, missing packages, permission denied, timeouts
+  - New `devsync/core/pip_utils.py` module with all pip logic isolated for security audit
+
+### Fixed
+- Stale v1 references in CLAUDE.md (#63)
+
 ## [0.12.0] - 2026-02-21
 
 ### Added
