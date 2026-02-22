@@ -15,8 +15,52 @@ $ devsync extract [OPTIONS]
 | `--output` | `-o` | Output directory for the package | `./devsync-package` |
 | `--name` | `-n` | Package name | -- |
 | `--no-ai` | -- | Use file-copy mode instead of AI extraction | `False` |
-| `--project-dir` | `-p` | Project directory to extract from | `.` |
-| `--upgrade` | `-u` | Path to v1 package to upgrade to v2 format | -- |
+| `--project` | `-p` | Project directory to extract from | `.` |
+| `--upgrade` | -- | Path to v1 package to upgrade to v2 format | -- |
+| `--tool` | `-t` | Only extract from specific AI tool(s). Repeatable. | -- |
+| `--component` | `-c` | Only extract specific component types (rules, mcp, hooks, commands, skills, workflows, memory, resources). Repeatable. | -- |
+| `--dry-run` | -- | Show detected components without writing files or calling the LLM | `False` |
+| `--include-global` | -- | Include home directory / global configs in extraction | `False` |
+
+## Preview with Dry Run
+
+Use `--dry-run` to see what would be extracted without writing any files or making LLM calls:
+
+```bash
+$ devsync extract --dry-run
+```
+
+```
+Detected Components
+
+  Component   Source    Count
+  Rules       claude        6
+  Rules       cursor        2
+  MCP         claude        3
+  Commands    claude       13
+
+  Total: 24 components from 2 tools
+
+Dry run — no files written.
+```
+
+Combine with filters to check what a filtered extraction would find:
+
+```bash
+$ devsync extract --dry-run --tool cursor --component rules
+```
+
+When filters match nothing, you'll see suggestions:
+
+```
+No components found matching your filters.
+
+  Active: --tool cursor --component hooks
+
+  Suggestions:
+  - Run devsync extract --dry-run without filters to see all available components
+  - Try --include-global to include home directory configs
+```
 
 ## AI-Powered Mode (Default)
 
@@ -27,22 +71,21 @@ $ devsync extract --output ./team-standards --name team-standards
 ```
 
 ```
-Extracting practices from /home/user/my-project...
+Detected Components
 
-  Scanning: .claude/rules/ (3 files)
-  Scanning: .cursor/rules/ (2 files)
-  Scanning: MCP configurations (1 server)
+  Component   Source    Count
+  Rules       claude        3
+  Rules       cursor        2
+  MCP         claude        1
 
-  Extracted 4 practice declarations:
-    - type-safety: Enforce strict type annotations
-    - error-handling: Structured error handling patterns
-    - code-style: Formatting and naming conventions
-    - testing: Test-first development practices
+  Total: 6 components from 2 tools
 
-  Extracted 1 MCP server:
-    - github: GitHub API access
+Extraction complete (AI-powered)
+  Practices generated: 4
+  MCP servers: 1
+  Source files: 5
 
-Package written to: ./team-standards/devsync-package.yaml
+  Package written to: ./team-standards/
 ```
 
 The output directory contains:
@@ -99,6 +142,38 @@ $ devsync extract --project-dir ~/other-project --output ./other-standards --nam
 $ devsync extract --output ~/shared/team-standards --name team-standards
 ```
 
+### Extract only from specific tools
+
+```bash
+$ devsync extract --tool cursor --tool claude
+```
+
+Extract only from Cursor and Claude Code, skipping other tools.
+
+### Extract only specific component types
+
+```bash
+$ devsync extract --component rules --component mcp
+```
+
+Extract only instruction rules and MCP configurations, skipping hooks, commands, etc.
+
+### Include global configurations
+
+```bash
+$ devsync extract --include-global
+```
+
+By default, DevSync only scans the project directory. Use `--include-global` to include global AI tool configurations (e.g. `~/.cursor/mcp.json`) in addition to project-level ones.
+
+### Combine filters
+
+```bash
+$ devsync extract --tool claude --component rules --include-global
+```
+
+Extract only instruction rules from Claude Code, including global configurations.
+
 ## What Gets Extracted
 
 DevSync scans for:
@@ -107,7 +182,16 @@ DevSync scans for:
 |--------|----------|
 | Instructions/rules | `.claude/rules/`, `.cursor/rules/`, `.windsurf/rules/`, `.github/instructions/`, `.kiro/steering/`, `.clinerules/`, `.roo/rules/` |
 | MCP configurations | `.claude/settings.local.json`, `.cursor/mcp.json`, `.vscode/mcp.json` |
-| Single-file configs | `AGENTS.md`, `CONVENTIONS.md`, `GEMINI.md` |
+| Hooks | `.claude/hooks/` |
+| Commands | `.claude/commands/`, `.roo/commands/` |
+| Skills | `.claude/skills/` |
+| Workflows | `.windsurf/workflows/` |
+| Memory files | `CLAUDE.md`, `GEMINI.md` |
+| Single-file configs | `AGENTS.md`, `CONVENTIONS.md`, `ANTEROOM.md` |
+| Resources | `.devsync/resources/` |
+
+!!! tip
+    Use `devsync tools --verbose` to see which component types each tool supports and the valid `--component` filter names.
 
 !!! tip
     The more AI rule files your project has, the richer the extracted practices will be. DevSync works best when extracting from projects that already have well-defined coding standards.

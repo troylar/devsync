@@ -1,10 +1,15 @@
 """AI-powered practice extraction engine."""
 
+from __future__ import annotations
+
 import json
 import logging
 import re
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from devsync.core.component_detector import DetectionResult
 
 from devsync.core.practice import MCPDeclaration, PracticeDeclaration
 from devsync.llm.prompts import (
@@ -28,19 +33,36 @@ class PracticeExtractor:
     def __init__(self, llm_provider: Optional[LLMProvider] = None):
         self._llm = llm_provider
 
-    def extract(self, project_path: Path) -> ExtractionResult:
+    def extract(
+        self,
+        project_path: Path,
+        tool_filter: list[str] | None = None,
+        component_filter: list[str] | None = None,
+        scope: str = "project",
+        detection: "DetectionResult | None" = None,
+    ) -> ExtractionResult:
         """Extract practices from a project directory.
 
         Args:
             project_path: Root directory of the project to analyze.
+            tool_filter: Only extract from these AI tools.
+            component_filter: Only extract these component types.
+            scope: Detection scope — project, global, or all.
+            detection: Pre-computed detection result. If provided, skip
+                internal detection (tool_filter, component_filter, scope
+                are ignored).
 
         Returns:
             ExtractionResult with extracted practices and MCP servers.
         """
-        from devsync.core.component_detector import ComponentDetector
+        if detection is None:
+            from devsync.core.component_detector import ComponentDetector, filter_detection_result
 
-        detector = ComponentDetector(project_path)
-        detection = detector.detect_all()
+            detector = ComponentDetector(project_path, scope=scope, tool_filter=tool_filter)
+            detection = detector.detect_all()
+
+            if component_filter:
+                detection = filter_detection_result(detection, component_filter=component_filter)
 
         instruction_files = self._read_instruction_files(project_path, detection)
         mcp_configs = self._read_mcp_configs(detection)

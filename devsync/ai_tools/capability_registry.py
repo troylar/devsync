@@ -28,6 +28,7 @@ class IDECapability:
     skills_directory: str | None = None  # Claude skills
     workflows_directory: str | None = None  # Windsurf workflows
     memory_file_name: str | None = None  # CLAUDE.md
+    mcp_servers_json_key: str = "mcpServers"  # JSON key for MCP servers in config files
     notes: str = ""
 
     def supports_component(self, component_type: ComponentType) -> bool:
@@ -494,6 +495,7 @@ CAPABILITY_REGISTRY: dict[AIToolType, IDECapability] = {
         mcp_project_config_path=".vscode/mcp.json",  # Workspace-level MCP config
         hooks_directory=None,  # Hooks not supported
         commands_directory=None,  # Commands not supported
+        mcp_servers_json_key="servers",  # VS Code uses "servers" not "mcpServers"
         notes=(
             "GitHub Copilot uses .github/copilot-instructions.md (main) and "
             ".github/instructions/**/*.instructions.md (file-specific with globs). "

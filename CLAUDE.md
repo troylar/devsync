@@ -54,7 +54,9 @@ devsync/
 │   ├── git_operations.py # Git clone/pull operations
 │   ├── pip_utils.py  # Pip package validation, detection, installation
 │   ├── checksum.py   # File integrity checking
-│   └── conflict_resolution.py # Handle file conflicts
+│   ├── conflict_resolution.py # Handle file conflicts
+│   ├── component_detector.py # Multi-tool component detection and filtering
+│   └── capability_registry.py # AI tool capability metadata
 ├── llm/               # LLM provider abstraction (HTTP-only, no SDK deps)
 │   ├── provider.py   # Abstract LLMProvider, LLMResponse, resolve_provider()
 │   ├── anthropic.py  # Anthropic Claude (HTTP via httpx)
@@ -349,6 +351,10 @@ devsync tools
 devsync extract
 devsync extract --no-ai          # File-copy mode
 devsync extract --output ./pkg --name team-standards
+devsync extract --tool cursor                    # Extract from Cursor only
+devsync extract --component mcp                  # Extract MCP servers only
+devsync extract --scope all                      # Include global configs
+devsync extract --tool claude --component rules  # Combine filters
 
 # Install a package
 devsync install ./team-standards

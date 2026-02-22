@@ -4,7 +4,7 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Optional
+from typing import Any, Optional
 
 from devsync.core.checksum import calculate_file_checksum
 from devsync.core.models import (
@@ -59,6 +59,7 @@ class DetectedMCPServer:
     source: str
     env_vars: list[str] = field(default_factory=list)
     pip_package: Optional[str] = None
+    source_tool: str = ""
 
 
 @dataclass
@@ -76,6 +77,7 @@ class DetectedHook:
     file_path: Path
     relative_path: str
     hook_type: str
+    source_tool: str = ""
 
 
 @dataclass
@@ -93,6 +95,7 @@ class DetectedCommand:
     file_path: Path
     relative_path: str
     command_type: str
+    source_tool: str = ""
 
 
 @dataclass
@@ -133,6 +136,7 @@ class DetectedSkill:
     relative_path: str
     description: str = ""
     has_scripts: bool = False
+    source_tool: str = ""
 
 
 @dataclass
@@ -144,26 +148,29 @@ class DetectedWorkflow:
         file_path: Absolute path to workflow file
         relative_path: Path relative to project root
         description: Workflow description
+        source_tool: Which tool this workflow belongs to
     """
 
     name: str
     file_path: Path
     relative_path: str
     description: str = ""
+    source_tool: str = ""
 
 
 @dataclass
 class DetectedMemoryFile:
-    """A CLAUDE.md memory file detected in the project.
+    """A memory file detected in the project (e.g. CLAUDE.md, GEMINI.md).
 
-    Memory files persist context across Claude Code sessions.
+    Memory files persist context across AI tool sessions.
 
     Attributes:
         name: Identifier (path-based for subdirectory files)
         file_path: Absolute path to file
         relative_path: Path relative to project root
-        is_root: Whether this is the root CLAUDE.md
+        is_root: Whether this is the root memory file
         content_preview: First 100 chars of content
+        source_tool: Which tool this memory file belongs to
     """
 
     name: str
@@ -171,6 +178,7 @@ class DetectedMemoryFile:
     relative_path: str
     is_root: bool = False
     content_preview: str = ""
+    source_tool: str = ""
 
 
 @dataclass
@@ -214,19 +222,83 @@ class DetectionResult:
         )
 
 
+COMPONENT_TYPE_MAP: dict[str, str] = {
+    "rules": "instructions",
+    "instructions": "instructions",
+    "mcp": "mcp_servers",
+    "mcp_servers": "mcp_servers",
+    "hooks": "hooks",
+    "commands": "commands",
+    "skills": "skills",
+    "workflows": "workflows",
+    "memory": "memory_files",
+    "memory_files": "memory_files",
+    "resources": "resources",
+}
+
+
+def filter_detection_result(
+    result: DetectionResult,
+    tool_filter: list[str] | None = None,
+    component_filter: list[str] | None = None,
+) -> DetectionResult:
+    """Filter a DetectionResult by tool and/or component type.
+
+    Args:
+        result: The detection result to filter.
+        tool_filter: If set, only keep components from these tools.
+        component_filter: If set, only keep these component types
+            (keys from COMPONENT_TYPE_MAP).
+
+    Returns:
+        A new DetectionResult with filtered lists.
+    """
+    allowed_fields: set[str] | None = None
+    if component_filter:
+        allowed_fields = set()
+        for comp in component_filter:
+            mapped = COMPONENT_TYPE_MAP.get(comp.lower())
+            if mapped:
+                allowed_fields.add(mapped)
+
+    def _filter_by_tool(items: list, tool_attr: str = "source_tool") -> list:
+        if not tool_filter:
+            return items
+        lower_filter = {t.lower() for t in tool_filter}
+        return [item for item in items if getattr(item, tool_attr, "").lower() in lower_filter]
+
+    def _get_field(field_name: str, items: list, tool_attr: str = "source_tool") -> list:
+        if allowed_fields is not None and field_name not in allowed_fields:
+            return []
+        return _filter_by_tool(items, tool_attr)
+
+    return DetectionResult(
+        instructions=_get_field("instructions", result.instructions, "source_ide"),
+        mcp_servers=_get_field("mcp_servers", result.mcp_servers),
+        hooks=_get_field("hooks", result.hooks),
+        commands=_get_field("commands", result.commands),
+        skills=_get_field("skills", result.skills),
+        workflows=_get_field("workflows", result.workflows),
+        memory_files=_get_field("memory_files", result.memory_files),
+        # Resources are tool-agnostic (.devsync/resources/), skip tool filtering
+        resources=result.resources if (allowed_fields is None or "resources" in allowed_fields) else [],
+        warnings=result.warnings,
+    )
+
+
 class ComponentDetector:
     """Scans project directories to detect packageable components.
 
-    Detection locations:
-    - Instructions: .claude/rules/, .cursor/rules/, .windsurf/rules/, .github/instructions/**/*
-    - Main Copilot instructions: .github/copilot-instructions.md
-    - MCP servers: .claude/settings.local.json (mcpServers section), .devsync/mcp/
-    - Hooks: .claude/hooks/
-    - Commands: .claude/commands/ (legacy)
-    - Skills: .claude/skills/ (directories with SKILL.md)
-    - Workflows: .windsurf/workflows/
-    - Memory files: CLAUDE.md at root and subdirectories
+    Uses the IDE capability registry to discover components from all supported
+    AI tools, not just Claude. Supports project and global scope detection.
+
+    Detection locations are derived from CAPABILITY_REGISTRY plus:
+    - Instructions: INSTRUCTION_LOCATIONS (kept as-is for directory-based)
+    - Single-file instructions: SINGLE_INSTRUCTION_FILES
+    - MCP servers: Registry mcp_project_config_path / mcp_config_path
+    - Hooks/Commands/Skills/Workflows/Memory: Registry directories
     - Resources: .devsync/resources/
+    - Fallback MCP: .devsync/mcp/
     """
 
     INSTRUCTION_LOCATIONS = {
@@ -239,7 +311,6 @@ class ComponentDetector:
         ".github/instructions": "copilot",
     }
 
-    # Single-file instruction locations (not directories)
     SINGLE_INSTRUCTION_FILES = {
         ".github/copilot-instructions.md": "copilot",
         "AGENTS.md": "codex",
@@ -248,28 +319,6 @@ class ComponentDetector:
 
     INSTRUCTION_EXTENSIONS = {".md", ".mdc", ".instructions.md"}
 
-    MCP_CONFIG_LOCATIONS = [
-        ".claude/settings.local.json",
-    ]
-
-    HOOK_LOCATIONS = [
-        ".claude/hooks",
-    ]
-
-    COMMAND_LOCATIONS = [
-        ".claude/commands",
-    ]
-
-    SKILL_LOCATIONS = [
-        ".claude/skills",
-    ]
-
-    WORKFLOW_LOCATIONS = [
-        ".windsurf/workflows",
-    ]
-
-    MEMORY_FILE_NAME = "CLAUDE.md"
-
     RESOURCE_LOCATIONS = [
         ".devsync/resources",
     ]
@@ -277,13 +326,41 @@ class ComponentDetector:
     MAX_RESOURCE_SIZE = 200 * 1024 * 1024  # 200 MB
     WARN_RESOURCE_SIZE = 50 * 1024 * 1024  # 50 MB
 
-    def __init__(self, project_root: Path):
+    VALID_SCOPES = {"project", "global", "all"}
+
+    def __init__(self, project_root: Path, scope: str = "project", tool_filter: list[str] | None = None):
         """Initialize detector with project root.
 
         Args:
             project_root: Path to project root directory
+            scope: Detection scope — "project", "global", or "all"
+            tool_filter: If set, only scan paths for these tool names
+
+        Raises:
+            ValueError: If scope is not one of project, global, all
         """
+        if scope not in self.VALID_SCOPES:
+            raise ValueError(f"Invalid scope: {scope!r}. Must be one of {self.VALID_SCOPES}")
         self.project_root = project_root.resolve()
+        self.scope = scope
+        self.tool_filter = tool_filter
+
+    def _get_registry_entries(self) -> list[tuple[str, Any]]:
+        """Get registry entries filtered by tool_filter.
+
+        Returns:
+            List of (tool_name, capability) tuples.
+        """
+        from devsync.ai_tools.capability_registry import CAPABILITY_REGISTRY
+
+        entries = []
+        for _tool_type, cap in CAPABILITY_REGISTRY.items():
+            tool_name = cap.tool_type.value
+            if self.tool_filter:
+                if tool_name not in {t.lower() for t in self.tool_filter}:
+                    continue
+            entries.append((tool_name, cap))
+        return entries
 
     def detect_all(self) -> DetectionResult:
         """Detect all packageable components in the project.
@@ -292,31 +369,14 @@ class ComponentDetector:
             DetectionResult with all detected components
         """
         result = DetectionResult()
-
-        detected_instructions = self._detect_instructions()
-        result.instructions = detected_instructions
-
-        detected_mcp = self._detect_mcp_servers()
-        result.mcp_servers = detected_mcp
-
-        detected_hooks = self._detect_hooks()
-        result.hooks = detected_hooks
-
-        detected_commands = self._detect_commands()
-        result.commands = detected_commands
-
-        detected_skills = self._detect_skills()
-        result.skills = detected_skills
-
-        detected_workflows = self._detect_workflows()
-        result.workflows = detected_workflows
-
-        detected_memory_files = self._detect_memory_files()
-        result.memory_files = detected_memory_files
-
-        detected_resources = self._detect_resources()
-        result.resources = detected_resources
-
+        result.instructions = self._detect_instructions()
+        result.mcp_servers = self._detect_mcp_servers()
+        result.hooks = self._detect_hooks()
+        result.commands = self._detect_commands()
+        result.skills = self._detect_skills()
+        result.workflows = self._detect_workflows()
+        result.memory_files = self._detect_memory_files()
+        result.resources = self._detect_resources()
         return result
 
     def _detect_instructions(self) -> list[DetectedInstruction]:
@@ -332,13 +392,14 @@ class ComponentDetector:
         """
         instructions: list[DetectedInstruction] = []
 
-        # Detect directory-based instructions
         for location, ide_name in self.INSTRUCTION_LOCATIONS.items():
+            if self.tool_filter and ide_name not in {t.lower() for t in self.tool_filter}:
+                continue
+
             dir_path = self.project_root / location
             if not dir_path.exists() or not dir_path.is_dir():
                 continue
 
-            # Use recursive glob for copilot to support subdirectories
             if ide_name == "copilot":
                 file_iter = dir_path.rglob("*")
             else:
@@ -348,13 +409,11 @@ class ComponentDetector:
                 if not file_path.is_file():
                     continue
 
-                # Check extension
                 suffix = file_path.suffix.lower()
                 if suffix not in self.INSTRUCTION_EXTENSIONS:
                     continue
 
                 try:
-                    # For copilot, include subdirectory in name
                     if ide_name == "copilot":
                         rel_to_dir = file_path.relative_to(dir_path)
                         if file_path.name.endswith(".instructions.md"):
@@ -379,8 +438,10 @@ class ComponentDetector:
                 except Exception as e:
                     logger.warning(f"Failed to read instruction {file_path}: {e}")
 
-        # Detect single-file instructions (e.g., .github/copilot-instructions.md)
         for file_location, ide_name in self.SINGLE_INSTRUCTION_FILES.items():
+            if self.tool_filter and ide_name not in {t.lower() for t in self.tool_filter}:
+                continue
+
             file_path = self.project_root / file_location
             if not file_path.exists() or not file_path.is_file():
                 continue
@@ -406,44 +467,68 @@ class ComponentDetector:
         return instructions
 
     def _detect_mcp_servers(self) -> list[DetectedMCPServer]:
-        """Detect MCP server configurations.
+        """Detect MCP server configurations from all registered tools.
+
+        Iterates registry-derived project and global config paths, using
+        each tool's mcp_servers_json_key for parsing.
 
         Returns:
             List of detected MCP servers
         """
         servers: list[DetectedMCPServer] = []
+        seen_paths: set[Path] = set()
 
-        for config_location in self.MCP_CONFIG_LOCATIONS:
-            config_path = self.project_root / config_location
-            if not config_path.exists():
-                continue
+        for tool_name, cap in self._get_registry_entries():
+            paths_to_check: list[tuple[Path, str]] = []
 
-            try:
-                with open(config_path, "r", encoding="utf-8") as f:
-                    config_data = json.load(f)
+            if self.scope in ("project", "all") and cap.mcp_project_config_path:
+                paths_to_check.append((self.project_root / cap.mcp_project_config_path, cap.mcp_project_config_path))
 
-                mcp_servers = config_data.get("mcpServers", {})
-                for server_name, server_config in mcp_servers.items():
-                    env_vars = list(server_config.get("env", {}).keys())
-                    pip_package = self._resolve_pip_package(
-                        server_config.get("command", ""),
-                        server_config.get("args", []),
-                    )
-                    servers.append(
-                        DetectedMCPServer(
-                            name=server_name,
-                            file_path=config_path,
-                            config=server_config,
-                            source=config_location,
-                            env_vars=env_vars,
-                            pip_package=pip_package,
+            if self.scope in ("global", "all") and cap.mcp_config_path:
+                expanded = Path(cap.mcp_config_path).expanduser().resolve()
+                if not str(expanded).startswith(str(Path.home())):
+                    logger.warning(f"Skipping global MCP path that escapes home directory: {cap.mcp_config_path}")
+                    continue
+                paths_to_check.append((expanded, cap.mcp_config_path))
+
+            json_key = cap.mcp_servers_json_key
+
+            for config_path, source_label in paths_to_check:
+                resolved = config_path.resolve()
+                if resolved in seen_paths:
+                    continue
+                if not config_path.exists():
+                    continue
+                seen_paths.add(resolved)
+
+                try:
+                    with open(config_path, "r", encoding="utf-8") as f:
+                        config_data = json.load(f)
+
+                    mcp_servers = config_data.get(json_key, {})
+                    for server_name, server_config in mcp_servers.items():
+                        env_vars = list(server_config.get("env", {}).keys())
+                        pip_package = self._resolve_pip_package(
+                            server_config.get("command", ""),
+                            server_config.get("args", []),
                         )
-                    )
-            except json.JSONDecodeError as e:
-                logger.warning(f"Invalid JSON in {config_path}: {e}")
-            except Exception as e:
-                logger.warning(f"Failed to read MCP config {config_path}: {e}")
+                        servers.append(
+                            DetectedMCPServer(
+                                name=server_name,
+                                file_path=config_path,
+                                config=server_config,
+                                source=source_label,
+                                env_vars=env_vars,
+                                pip_package=pip_package,
+                                source_tool=tool_name,
+                            )
+                        )
+                except json.JSONDecodeError as e:
+                    logger.warning(f"Invalid JSON in {config_path}: {e}")
+                except Exception as e:
+                    logger.warning(f"Failed to read MCP config {config_path}: {e}")
 
+        # Fallback: .devsync/mcp/ directory (tool-agnostic)
         mcp_dir = self.project_root / ".devsync" / "mcp"
         if mcp_dir.exists() and mcp_dir.is_dir():
             for file_path in mcp_dir.glob("*.json"):
@@ -463,6 +548,7 @@ class ComponentDetector:
                             source=str(file_path.relative_to(self.project_root)),
                             env_vars=env_vars,
                             pip_package=pip_package,
+                            source_tool="devsync",
                         )
                     )
                 except Exception as e:
@@ -489,15 +575,18 @@ class ComponentDetector:
         return resolve_pip_package_for_command(command, args)
 
     def _detect_hooks(self) -> list[DetectedHook]:
-        """Detect hook scripts.
+        """Detect hook scripts from registry-derived paths.
 
         Returns:
             List of detected hooks
         """
         hooks: list[DetectedHook] = []
 
-        for location in self.HOOK_LOCATIONS:
-            hook_dir = self.project_root / location
+        for tool_name, cap in self._get_registry_entries():
+            if not cap.hooks_directory:
+                continue
+
+            hook_dir = self.project_root / cap.hooks_directory
             if not hook_dir.exists() or not hook_dir.is_dir():
                 continue
 
@@ -514,6 +603,7 @@ class ComponentDetector:
                         file_path=file_path,
                         relative_path=str(file_path.relative_to(self.project_root)),
                         hook_type=hook_type,
+                        source_tool=tool_name,
                     )
                 )
 
@@ -540,15 +630,18 @@ class ComponentDetector:
         return "Unknown"
 
     def _detect_commands(self) -> list[DetectedCommand]:
-        """Detect command scripts.
+        """Detect command scripts from registry-derived paths.
 
         Returns:
             List of detected commands
         """
         commands: list[DetectedCommand] = []
 
-        for location in self.COMMAND_LOCATIONS:
-            cmd_dir = self.project_root / location
+        for tool_name, cap in self._get_registry_entries():
+            if not cap.commands_directory:
+                continue
+
+            cmd_dir = self.project_root / cap.commands_directory
             if not cmd_dir.exists() or not cmd_dir.is_dir():
                 continue
 
@@ -565,6 +658,7 @@ class ComponentDetector:
                         file_path=file_path,
                         relative_path=str(file_path.relative_to(self.project_root)),
                         command_type=command_type,
+                        source_tool=tool_name,
                     )
                 )
 
@@ -631,7 +725,7 @@ class ComponentDetector:
         return resources
 
     def _detect_skills(self) -> list[DetectedSkill]:
-        """Detect Claude skill directories.
+        """Detect skill directories from registry-derived paths.
 
         Skills are directories containing SKILL.md with optional supporting files.
 
@@ -640,8 +734,11 @@ class ComponentDetector:
         """
         skills: list[DetectedSkill] = []
 
-        for location in self.SKILL_LOCATIONS:
-            skill_dir = self.project_root / location
+        for tool_name, cap in self._get_registry_entries():
+            if not cap.skills_directory:
+                continue
+
+            skill_dir = self.project_root / cap.skills_directory
             if not skill_dir.exists() or not skill_dir.is_dir():
                 continue
 
@@ -651,7 +748,6 @@ class ComponentDetector:
 
                 skill_md = item / "SKILL.md"
                 if not skill_md.exists():
-                    # Also check for Skill.md (case-insensitive)
                     skill_md_lower = item / "Skill.md"
                     if skill_md_lower.exists():
                         skill_md = skill_md_lower
@@ -671,6 +767,7 @@ class ComponentDetector:
                             relative_path=relative_path,
                             description=description,
                             has_scripts=has_scripts,
+                            source_tool=tool_name,
                         )
                     )
                 except Exception as e:
@@ -702,15 +799,18 @@ class ComponentDetector:
         return ""
 
     def _detect_workflows(self) -> list[DetectedWorkflow]:
-        """Detect Windsurf workflow files.
+        """Detect workflow files from registry-derived paths.
 
         Returns:
             List of detected workflows
         """
         workflows: list[DetectedWorkflow] = []
 
-        for location in self.WORKFLOW_LOCATIONS:
-            workflow_dir = self.project_root / location
+        for tool_name, cap in self._get_registry_entries():
+            if not cap.workflows_directory:
+                continue
+
+            workflow_dir = self.project_root / cap.workflows_directory
             if not workflow_dir.exists() or not workflow_dir.is_dir():
                 continue
 
@@ -731,6 +831,7 @@ class ComponentDetector:
                             file_path=file_path,
                             relative_path=relative_path,
                             description=description,
+                            source_tool=tool_name,
                         )
                     )
                 except Exception as e:
@@ -761,66 +862,78 @@ class ComponentDetector:
         return ""
 
     def _detect_memory_files(self) -> list[DetectedMemoryFile]:
-        """Detect CLAUDE.md memory files.
+        """Detect memory files from registry-derived names.
 
-        Detects CLAUDE.md at project root and in subdirectories.
+        Detects memory files (e.g. CLAUDE.md, GEMINI.md) at project root
+        and in subdirectories.
 
         Returns:
             List of detected memory files
         """
         memory_files: list[DetectedMemoryFile] = []
+        seen_files: set[Path] = set()
 
-        # Check root CLAUDE.md
-        root_memory = self.project_root / self.MEMORY_FILE_NAME
-        if root_memory.exists() and root_memory.is_file():
-            try:
-                content = root_memory.read_text(encoding="utf-8")
-                content_preview = content[:100] if content else ""
-                memory_files.append(
-                    DetectedMemoryFile(
-                        name="CLAUDE",
-                        file_path=root_memory,
-                        relative_path=self.MEMORY_FILE_NAME,
-                        is_root=True,
-                        content_preview=content_preview,
+        memory_file_names: dict[str, str] = {}
+        for tool_name, cap in self._get_registry_entries():
+            if cap.memory_file_name:
+                memory_file_names[cap.memory_file_name] = tool_name
+
+        for mem_file_name, tool_name in memory_file_names.items():
+            stem = Path(mem_file_name).stem
+
+            root_memory = self.project_root / mem_file_name
+            if root_memory.exists() and root_memory.is_file() and root_memory not in seen_files:
+                seen_files.add(root_memory)
+                try:
+                    content = root_memory.read_text(encoding="utf-8")
+                    content_preview = content[:100] if content else ""
+                    memory_files.append(
+                        DetectedMemoryFile(
+                            name=stem,
+                            file_path=root_memory,
+                            relative_path=mem_file_name,
+                            is_root=True,
+                            content_preview=content_preview,
+                            source_tool=tool_name,
+                        )
                     )
-                )
-            except Exception as e:
-                logger.warning(f"Failed to read memory file {root_memory}: {e}")
+                except Exception as e:
+                    logger.warning(f"Failed to read memory file {root_memory}: {e}")
 
-        # Find CLAUDE.md in subdirectories (not too deep)
-        for file_path in self.project_root.rglob(self.MEMORY_FILE_NAME):
-            if file_path == root_memory:
-                continue
-            if not file_path.is_file():
-                continue
+            for file_path in self.project_root.rglob(mem_file_name):
+                if file_path == root_memory:
+                    continue
+                if not file_path.is_file():
+                    continue
+                if file_path in seen_files:
+                    continue
+                seen_files.add(file_path)
 
-            # Skip common non-project directories
-            rel_path = file_path.relative_to(self.project_root)
-            parts = rel_path.parts
-            if any(p.startswith(".") and p not in {".claude", ".github"} for p in parts[:-1]):
-                continue
-            if any(p in {"node_modules", "venv", ".venv", "__pycache__", "dist", "build"} for p in parts):
-                continue
+                rel_path = file_path.relative_to(self.project_root)
+                parts = rel_path.parts
+                if any(p.startswith(".") and p not in {".claude", ".github"} for p in parts[:-1]):
+                    continue
+                if any(p in {"node_modules", "venv", ".venv", "__pycache__", "dist", "build"} for p in parts):
+                    continue
 
-            try:
-                content = file_path.read_text(encoding="utf-8")
-                content_preview = content[:100] if content else ""
-                # Create name from directory path
-                parent_parts = parts[:-1]
-                name = "-".join(parent_parts) + "-CLAUDE" if parent_parts else "CLAUDE"
+                try:
+                    content = file_path.read_text(encoding="utf-8")
+                    content_preview = content[:100] if content else ""
+                    parent_parts = parts[:-1]
+                    name = "-".join(parent_parts) + f"-{stem}" if parent_parts else stem
 
-                memory_files.append(
-                    DetectedMemoryFile(
-                        name=name,
-                        file_path=file_path,
-                        relative_path=str(rel_path),
-                        is_root=False,
-                        content_preview=content_preview,
+                    memory_files.append(
+                        DetectedMemoryFile(
+                            name=name,
+                            file_path=file_path,
+                            relative_path=str(rel_path),
+                            is_root=False,
+                            content_preview=content_preview,
+                            source_tool=tool_name,
+                        )
                     )
-                )
-            except Exception as e:
-                logger.warning(f"Failed to read memory file {file_path}: {e}")
+                except Exception as e:
+                    logger.warning(f"Failed to read memory file {file_path}: {e}")
 
         return memory_files
 
@@ -850,13 +963,14 @@ class ComponentDetector:
 
         mcp_servers = []
         for mcp in detection_result.mcp_servers:
+            ide = [mcp.source_tool] if mcp.source_tool else ["claude"]
             mcp_servers.append(
                 MCPServerComponent(
                     name=mcp.name,
                     file=f"mcp/{mcp.name}.json",
                     description=f"MCP server from {mcp.source}" if include_descriptions else "",
                     credentials=[],
-                    ide_support=["claude"],
+                    ide_support=ide,
                 )
             )
 
@@ -866,7 +980,7 @@ class ComponentDetector:
                 file=hook.relative_path,
                 description=f"{hook.hook_type} hook" if include_descriptions else "",
                 hook_type=hook.hook_type,
-                ide_support=["claude"],
+                ide_support=[hook.source_tool] if hook.source_tool else ["claude"],
             )
             for hook in detection_result.hooks
         ]
@@ -877,7 +991,7 @@ class ComponentDetector:
                 file=cmd.relative_path,
                 description=f"{cmd.command_type} command" if include_descriptions else "",
                 command_type=cmd.command_type,
-                ide_support=["claude"],
+                ide_support=[cmd.source_tool] if cmd.source_tool else ["claude"],
             )
             for cmd in detection_result.commands
         ]
@@ -898,8 +1012,8 @@ class ComponentDetector:
             SkillComponent(
                 name=skill.name,
                 file=skill.relative_path,
-                description=skill.description or ("Claude skill" if include_descriptions else ""),
-                ide_support=["claude"],
+                description=skill.description or ("Skill" if include_descriptions else ""),
+                ide_support=[skill.source_tool] if skill.source_tool else ["claude"],
             )
             for skill in detection_result.skills
         ]
@@ -908,8 +1022,8 @@ class ComponentDetector:
             WorkflowComponent(
                 name=wf.name,
                 file=wf.relative_path,
-                description=wf.description or ("Windsurf workflow" if include_descriptions else ""),
-                ide_support=["windsurf"],
+                description=wf.description or ("Workflow" if include_descriptions else ""),
+                ide_support=[wf.source_tool] if wf.source_tool else ["windsurf"],
             )
             for wf in detection_result.workflows
         ]
@@ -919,7 +1033,7 @@ class ComponentDetector:
                 name=mem.name,
                 file=mem.relative_path,
                 description=("Root memory file" if mem.is_root else "Memory file") if include_descriptions else "",
-                ide_support=["claude"],
+                ide_support=[mem.source_tool] if mem.source_tool else ["claude"],
             )
             for mem in detection_result.memory_files
         ]

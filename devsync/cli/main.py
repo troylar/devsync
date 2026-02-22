@@ -30,13 +30,20 @@ def setup() -> None:
 
 
 @app.command()
-def tools() -> None:
+def tools(
+    verbose: bool = typer.Option(
+        False,
+        "--verbose",
+        "-v",
+        help="Show capabilities and valid filter names",
+    ),
+) -> None:
     """Show detected AI coding tools.
 
     Display which AI coding tools are installed on your system
     and where their configuration directories are located.
     """
-    exit_code = show_tools()
+    exit_code = show_tools(verbose=verbose)
     raise typer.Exit(code=exit_code)
 
 
@@ -70,11 +77,41 @@ def extract(
         "--upgrade",
         help="Convert a v1 package to v2 format",
     ),
+    tool: Optional[list[str]] = typer.Option(
+        None,
+        "--tool",
+        "-t",
+        help="Only extract from specific AI tool(s). Repeatable.",
+    ),
+    component: Optional[list[str]] = typer.Option(
+        None,
+        "--component",
+        "-c",
+        help="Component types to extract: rules, mcp, hooks, commands, skills, workflows, memory. Repeatable.",
+    ),
+    scope: str = typer.Option(
+        "project",
+        "--scope",
+        "-s",
+        help="(Deprecated) Detection scope: project, global, or all. Use --include-global instead.",
+        hidden=True,
+    ),
+    dry_run: bool = typer.Option(
+        False,
+        "--dry-run",
+        help="Show detected components without writing files or calling the LLM",
+    ),
+    include_global: bool = typer.Option(
+        False,
+        "--include-global",
+        help="Include home directory / global configs in extraction",
+    ),
 ) -> None:
     """Extract practices from a project into a shareable package.
 
-    Reads your project's AI tool configs (rules, MCP servers, hooks, commands)
-    and produces a devsync-package.yaml with abstract practice declarations.
+    Reads your project's AI tool configs (rules, MCP servers, hooks, commands,
+    skills, workflows, memory files, resources) and produces a devsync-package.yaml
+    with abstract practice declarations.
 
     Examples:
       # AI-powered extraction
@@ -85,6 +122,21 @@ def extract(
 
       # Custom output and name
       devsync extract --output ./my-package --name team-standards
+
+      # Extract only from Cursor
+      devsync extract --tool cursor
+
+      # Extract only MCP configs
+      devsync extract --component mcp
+
+      # Preview what would be extracted (no files written)
+      devsync extract --dry-run
+
+      # Include home directory / global configs
+      devsync extract --include-global
+
+      # Combine filters: extract only rules and hooks from Claude Code
+      devsync extract --tool claude --component rules --component hooks
 
       # Upgrade v1 package to v2
       devsync extract --upgrade ./old-package
@@ -97,6 +149,11 @@ def extract(
         no_ai=no_ai,
         project_dir=project_dir,
         upgrade=upgrade,
+        tool=tool,
+        component=component,
+        scope=scope,
+        dry_run=dry_run,
+        include_global=include_global,
     )
     raise typer.Exit(code=exit_code)
 
