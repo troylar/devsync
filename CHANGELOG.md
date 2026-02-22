@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-02-22
+
+### Changed
+- Update all GitHub Actions to latest versions: actions/checkout v6, actions/github-script v8, actions/labeler v6, amannn/action-semantic-pull-request v6 (#84)
+- Bump setuptools build requirement from <69 to <81 (#84)
+- Bump black from 24.10.0 to 26.1.0 (#84)
+- Remove Snyk security scanning from CI (quota-limited, replaced by dependency-review-action) (#84)
+
 ## [0.14.0] - 2026-02-22
 
 ### Added
