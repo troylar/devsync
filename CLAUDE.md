@@ -72,7 +72,7 @@ devsync/
 
 ### Key Data Models
 
-From `ai-config-kit/core/models.py`:
+From `devsync/core/models.py`:
 
 #### Instructions
 - **Instruction**: Single instruction file with name, description, content, file_path, tags, checksum
@@ -249,13 +249,15 @@ git commit -m "docs: update CLAUDE.md architecture section (#95)"
 ## Important Implementation Details
 
 ### Project Root Detection
-The `utils/project.py` module detects project root by looking for markers like `.git/`, `pyproject.toml`, `package.json`, etc. This enables running `aiconfig` from any subdirectory within a project.
+The `utils/project.py` module detects project root by looking for markers like `.git/`, `pyproject.toml`, `package.json`, etc. This enables running `devsync` from any subdirectory within a project.
 
-### Installation Workflow
-1. **Download**: Clone/copy repo to `~/.devsync/library/<namespace>/`
-2. **Browse**: TUI reads library, displays instructions
-3. **Install**: Copy instruction file to project's tool-specific directory
-4. **Track**: Record in `<project-root>/.devsync/installations.json`
+### Installation Workflow (v2)
+1. **Parse Manifest**: Read `devsync-package.yaml` (or v1 `ai-config-kit-package.yaml`)
+2. **Detect Tools**: Auto-detect installed AI tools in the target project
+3. **AI Adaptation**: Use LLM to adapt practices to recipient's existing rules (or file-copy in `--no-ai` mode)
+4. **Review Plan**: Show user what will be installed/merged/skipped
+5. **Execute**: Write adapted files to tool-specific directories, prompt for MCP credentials
+6. **Track**: Record in `<project-root>/.devsync/packages.json`
 
 ### Conflict Resolution
 When installing an instruction that already exists:
@@ -420,14 +422,14 @@ chmod +x .githooks/pre-push
 ## Common Tasks
 
 ### Adding a New AI Tool
-1. Create `ai-config-kit/ai_tools/newtool.py` inheriting from `AITool`
+1. Create `devsync/ai_tools/newtool.py` inheriting from `AITool`
 2. Implement `detect()`, `get_install_path()`, and `install()` methods
 3. Add to `AIToolType` enum in `models.py`
 4. Register in `detector.py`
 5. Add tests in `tests/unit/test_ai_tools.py`
 
 ### Adding a New CLI Command
-1. Create command file in `ai-config-kit/cli/`
+1. Create command file in `devsync/cli/`
 2. Define Typer command with `@app.command()`
 3. Register in `cli/main.py`
 4. Add tests in `tests/unit/test_cli.py`
@@ -654,7 +656,7 @@ Wait for the GitHub Actions workflow to complete (usually 2-5 minutes), then:
 pip install --upgrade devsync
 
 # Check installed version
-aiconfig --version
+devsync --version
 
 # Verify GitHub release
 gh release view v0.2.0
